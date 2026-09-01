@@ -1,11 +1,11 @@
-# Sitio web de [nombre de la institución]
+# Sitio web de Club Sportivo San Cayetano 
 Trabajo Final Integrador — Programación IV
 Tecnicatura Universitaria en Programación — UTN FRMDP, Extensión Áulica Necochea
-## La institución
+## Club Sportivo San Cayetano
 Dos o tres líneas sobre qué es y qué hace.
 ## Integrantes
-- Apellido, Nombre
-- Apellido, Nombre
+- Diaz Burgois, Ian
+- Arizmendi, Guillermina
 ## Estado
 Etapa 1 — Investigación y análisis.
 ## ejecutar el proyecto 
