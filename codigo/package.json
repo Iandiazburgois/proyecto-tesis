@@ -4,7 +4,9 @@
   "description": "Trabajo Final Integrador — Programación IV\r Tecnicatura Universitaria en Programación — UTN FRMDP, Extensión Áulica Necochea\r ## Club Sportivo San Cayetano\r Dos o tres líneas sobre qué es y qué hace.\r # Sitio web del Club Sportivo San Cayetano\r Trabajo Final Integrador — Programación IV\r Tecnicatura Universitaria en Programación — UTN FRMDP, Extensión Áulica Necochea\r ## Club Sportivo San Cayetano\r Es un club deportivo y social de San Cayetano, enfocado en promover la actividad física y la vida comunitaria a través del fútbol y sus distintas actividades. Funciona como un punto de encuentro clave para las familias del pueblo, impulsando el deporte y el sentido de pertenencia local.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
   "repository": {
     "type": "git",
