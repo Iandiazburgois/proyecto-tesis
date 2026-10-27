@@ -39,7 +39,7 @@ Los campos con `*` son obligatorios.
 | Método | Ruta | Parámetros | Qué hay que mandar | Qué devuelve | Códigos | Acceso |
 |---|---|---|---|---|---|---|
 | POST | `/auth/registro` | — | `{ socio: { nombre*, apellido*, dni*, email*, password* (mínimo 6 caracteres), fecha_nacimiento* (AAAA-MM-DD), telefono, dni_frente_url, dni_dorso_url }, familiares: [{ nombre*, apellido*, dni*, parentesco*, dni_frente_url, dni_dorso_url }] }` | El socio creado con su grupo familiar, sin la contraseña. El titular y los familiares se guardan juntos: si algo falla, no se guarda nada. Todo el que se registra queda como socio, nunca como admin | 201, 400 (faltan datos o están mal escritos), 409 (ya hay un socio con ese email o DNI) | Pública |
-| POST | `/auth/login` | — | `{ usuario*, password* }`. El usuario puede ser el email o el DNI | `{ token, socio }`. El token dura 8 horas | 200, 400 (faltan datos), 401 (el usuario o la contraseña no coinciden) | Pública |
+| POST | `/auth/login` | — | `{ usuario*, password* }`. El usuario puede ser el email o el DNI | `{ token, socio }`. El token dura 1 hora | 200, 400 (faltan datos), 401 (el usuario o la contraseña no coinciden) | Pública |
 
 ## Socios (4.2)
 
