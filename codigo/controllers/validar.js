@@ -1,9 +1,10 @@
 const { ErrorDeNegocio, ErrorDeDatos } = require('../utils/errores');
-
+// Máximo de un INTEGER en PostgreSQL. Un id más grande hace fallar la consulta (500).
+const ID_MAXIMO = 2147483647;
 // req.params.id siempre llega como texto. Devuelve el número, o null si no es un entero positivo.
 function idValido(valor) {
   const n = Number(valor);
-  return Number.isInteger(n) && n > 0 ? n : null;
+  return Number.isInteger(n) && n > 0 && n <= ID_MAXIMO ? n : null;
 }
 
 // Devuelve la lista de campos obligatorios que faltan o vienen vacíos.
@@ -16,6 +17,13 @@ function tomar(body, campos) {
   const datos = {};
   for (const c of campos) if (body[c] !== undefined) datos[c] = body[c];
   return datos;
+}
+
+// Devuelve los campos que superan el largo máximo de su columna (VARCHAR(n)).
+function demasiadoLargos(obj, limites) {
+  return Object.keys(limites).filter(
+    (c) => obj[c] !== undefined && obj[c] !== null && String(obj[c]).length > limites[c]
+  );
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -40,4 +48,4 @@ function responderError(e, res) {
   throw e;
 }
 
-module.exports = { idValido, faltantes, tomar, EMAIL_RE, esFecha, esHora, responderError };
+module.exports = { idValido, faltantes, demasiadoLargos, tomar, EMAIL_RE, esFecha, esHora, responderError };
