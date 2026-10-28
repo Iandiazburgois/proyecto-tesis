@@ -1,0 +1,384 @@
+# Colección de pruebas de la API (4.6) — Club Sportivo San Cayetano
+# Se ejecuta con la extensión REST Client de VS Code.
+#
+# Antes: base cargada con esquema.sql y juego_de_datos.sql, y el servidor corriendo (npm run dev).
+# Uso: "Send Request" sobre cada pedido, en orden ya que varios usan el token o el id de uno anterior.
+# El título de cada pedido dice el código esperado. Al final se borra lo creado.
+# Usuarios de prueba datos ficticios: contraseña 123456.
+
+@baseUrl = http://localhost:3000/api
+
+@token = {{loginSocio.response.body.$.token}}
+@tokenAdmin = {{loginAdmin.response.body.$.token}}
+@tokenNuevo = {{loginNuevo.response.body.$.token}}
+@idNuevo = {{registro.response.body.$.id_socio}}
+@idCuota = {{crearCuota.response.body.$.id_cuota}}
+@idFamiliar = {{crearFamiliar.response.body.$.id_grupo}}
+@idNovedad = {{crearNovedad.response.body.$.id_novedad}}
+@idActividad = {{crearActividad.response.body.$.id_actividad}}
+@idProfesor = {{crearProfesor.response.body.$.id_profesor}}
+@idInstalacion = {{crearInstalacion.response.body.$.id_instalacion}}
+@idSponsor = {{crearSponsor.response.body.$.id_sponsor}}
+
+###
+# ---------- 1. AUTENTICACIÓN ----------
+
+### Login de socio con email → 200
+# @name loginSocio
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{ "usuario": "juan.perez@email.com", "password": "123456" }
+
+### Login de admin con DNI → 200
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{ "usuario": "20111222", "password": "123456" }
+
+### Login con contraseña incorrecta → 401
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{ "usuario": "juan.perez@email.com", "password": "incorrecta" }
+
+### Registro de socio con un familiar → 201 (manda "rol": "admin": tiene que quedar como socio)
+# @name registro
+POST {{baseUrl}}/auth/registro
+Content-Type: application/json
+
+{
+  "socio": { "nombre": "Prueba", "apellido": "Rest", "dni": "{{$randomInt 10000000 99999999}}", "email": "prueba{{$randomInt 10000000 99999999}}@email.com", "password": "123456", "fecha_nacimiento": "1995-06-15", "rol": "admin" },
+  "familiares": [ { "nombre": "Hija", "apellido": "Rest", "dni": "{{$randomInt 900000000 999999999}}", "parentesco": "Hija" } ]
+}
+
+### Registro con un email que ya existe → 409
+POST {{baseUrl}}/auth/registro
+Content-Type: application/json
+
+{ "socio": { "nombre": "X", "apellido": "Y", "dni": "11111111", "email": "juan.perez@email.com", "password": "123456", "fecha_nacimiento": "1990-01-01" } }
+
+### Registro sin datos obligatorios → 400
+POST {{baseUrl}}/auth/registro
+Content-Type: application/json
+
+{ "socio": {} }
+
+### Login del socio recién registrado → 200
+# @name loginNuevo
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{ "usuario": "{{registro.response.body.$.email}}", "password": "123456" }
+
+###
+# ---------- 2. RUTAS PROTEGIDAS ----------
+
+### Ruta protegida sin token → 401
+GET {{baseUrl}}/socios/me
+
+### Socio en una ruta de admin → 403
+GET {{baseUrl}}/socios
+Authorization: Bearer {{token}}
+
+###
+# ---------- 3. SOCIOS ----------
+
+### Mis datos y mi grupo familiar → 200
+GET {{baseUrl}}/socios/me
+Authorization: Bearer {{tokenNuevo}}
+
+### Modificar mi teléfono → 200
+PUT {{baseUrl}}/socios/me
+Authorization: Bearer {{tokenNuevo}}
+Content-Type: application/json
+
+{ "telefono": "2262123456" }
+
+### Modificar con un nombre de más de 100 caracteres → 400
+PUT {{baseUrl}}/socios/me
+Authorization: Bearer {{tokenNuevo}}
+Content-Type: application/json
+
+{ "nombre": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" }
+
+### Cambiar mi contraseña → 204
+PUT {{baseUrl}}/socios/me/password
+Authorization: Bearer {{tokenNuevo}}
+Content-Type: application/json
+
+{ "actual": "123456", "nueva": "nueva123" }
+
+### Admin: lista de socios filtrada → 200
+GET {{baseUrl}}/socios?q=perez
+Authorization: Bearer {{tokenAdmin}}
+
+### Admin: un socio con su grupo familiar y sus cuotas → 200
+GET {{baseUrl}}/socios/{{idNuevo}}
+Authorization: Bearer {{tokenAdmin}}
+
+### Admin: id que no es un número → 400
+GET {{baseUrl}}/socios/abc
+Authorization: Bearer {{tokenAdmin}}
+
+### Admin: socio que no existe → 404
+GET {{baseUrl}}/socios/99999
+Authorization: Bearer {{tokenAdmin}}
+
+### Admin: cambiar la categoría → 200
+PUT {{baseUrl}}/socios/{{idNuevo}}
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "categoria": "Pleno" }
+
+###
+# ---------- 4. CUOTAS ----------
+
+### Mis cuotas y total a pagar → 200
+GET {{baseUrl}}/cuotas/mias
+Authorization: Bearer {{token}}
+
+### Admin: crear una cuota para el socio nuevo → 201
+# @name crearCuota
+POST {{baseUrl}}/cuotas
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "id_socio": {{idNuevo}}, "mes_periodo": 11, "anio_periodo": 2026, "monto": 15000, "fecha_vencimiento": "2026-11-10" }
+
+### Admin: la misma cuota otra vez → 409
+POST {{baseUrl}}/cuotas
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "id_socio": {{idNuevo}}, "mes_periodo": 11, "anio_periodo": 2026, "monto": 15000, "fecha_vencimiento": "2026-11-10" }
+
+### Admin: cuotas pendientes → 200
+GET {{baseUrl}}/cuotas?estado=Pendiente
+Authorization: Bearer {{tokenAdmin}}
+
+### Admin: una cuota por id → 200
+GET {{baseUrl}}/cuotas/{{idCuota}}
+Authorization: Bearer {{tokenAdmin}}
+
+### Socio nuevo: enviar el comprobante → 200 (queda "En revisión")
+PUT {{baseUrl}}/cuotas/{{idCuota}}/comprobante
+Authorization: Bearer {{tokenNuevo}}
+Content-Type: application/json
+
+{ "comprobante_url": "https://storage.club.com/comprobantes/prueba.pdf", "medio_pago": "Transferencia" }
+
+### Otro socio: comprobante de una cuota ajena → 404
+PUT {{baseUrl}}/cuotas/{{idCuota}}/comprobante
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "comprobante_url": "x", "medio_pago": "x" }
+
+### Admin: confirmar el pago → 200
+PUT {{baseUrl}}/cuotas/{{idCuota}}
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "estado_pago": "Pagado" }
+
+### Admin: borrar la cuota → 204
+DELETE {{baseUrl}}/cuotas/{{idCuota}}
+Authorization: Bearer {{tokenAdmin}}
+
+###
+# ---------- 5. CONTENIDO DEL SITIO (listar y ver son públicos; el resto, solo admin) ----------
+
+### Novedades: lista → 200
+GET {{baseUrl}}/novedades
+
+### Novedades: una por id → 200
+GET {{baseUrl}}/novedades/1
+
+### Novedades: id que no existe → 404
+GET {{baseUrl}}/novedades/99999
+
+### Novedades: crear sin datos obligatorios → 400
+POST {{baseUrl}}/novedades
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{}
+
+### Novedades: crear → 201
+# @name crearNovedad
+POST {{baseUrl}}/novedades
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "titulo": "Novedad de prueba", "contenido": "Creada desde la colección de pruebas", "destacado": false }
+
+### Novedades: modificar → 200
+PUT {{baseUrl}}/novedades/{{idNovedad}}
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "destacado": true }
+
+### Novedades: borrar → 204
+DELETE {{baseUrl}}/novedades/{{idNovedad}}
+Authorization: Bearer {{tokenAdmin}}
+
+### Actividades: lista → 200
+GET {{baseUrl}}/actividades
+
+### Actividades: una por id → 200
+GET {{baseUrl}}/actividades/1
+
+### Actividades: crear → 201
+# @name crearActividad
+POST {{baseUrl}}/actividades
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "nombre": "Actividad de prueba", "descripcion": "Creada desde la colección", "dias": "Lunes", "hora_inicio": "18:00", "hora_fin": "19:00", "id_profesor": 1 }
+
+### Actividades: modificar → 200
+PUT {{baseUrl}}/actividades/{{idActividad}}
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "dias": "Lunes y miércoles" }
+
+### Actividades: borrar → 204
+DELETE {{baseUrl}}/actividades/{{idActividad}}
+Authorization: Bearer {{tokenAdmin}}
+
+### Profesores: lista → 200
+GET {{baseUrl}}/profesores
+
+### Profesores: uno por id → 200
+GET {{baseUrl}}/profesores/1
+
+### Profesores: crear → 201
+# @name crearProfesor
+POST {{baseUrl}}/profesores
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "nombre": "Profe", "apellido": "Prueba" }
+
+### Profesores: modificar → 200
+PUT {{baseUrl}}/profesores/{{idProfesor}}
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "apellido": "Modificado" }
+
+### Profesores: borrar → 204
+DELETE {{baseUrl}}/profesores/{{idProfesor}}
+Authorization: Bearer {{tokenAdmin}}
+
+### Instalaciones: lista → 200
+GET {{baseUrl}}/instalaciones
+
+### Instalaciones: una por id → 200
+GET {{baseUrl}}/instalaciones/1
+
+### Instalaciones: crear → 201
+# @name crearInstalacion
+POST {{baseUrl}}/instalaciones
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "nombre": "Instalación de prueba", "descripcion": "Creada desde la colección" }
+
+### Instalaciones: modificar → 200
+PUT {{baseUrl}}/instalaciones/{{idInstalacion}}
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "descripcion": "Modificada" }
+
+### Instalaciones: borrar → 204
+DELETE {{baseUrl}}/instalaciones/{{idInstalacion}}
+Authorization: Bearer {{tokenAdmin}}
+
+### Sponsors: lista → 200
+GET {{baseUrl}}/sponsors
+
+### Sponsors: uno por id → 200
+GET {{baseUrl}}/sponsors/1
+
+### Sponsors: crear → 201
+# @name crearSponsor
+POST {{baseUrl}}/sponsors
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "nombre": "Sponsor de prueba", "logo_url": "https://storage.club.com/sponsors/prueba.png" }
+
+### Sponsors: modificar → 200
+PUT {{baseUrl}}/sponsors/{{idSponsor}}
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "nombre": "Sponsor modificado" }
+
+### Sponsors: borrar → 204
+DELETE {{baseUrl}}/sponsors/{{idSponsor}}
+Authorization: Bearer {{tokenAdmin}}
+
+###
+# ---------- 6. BÚSQUEDA ----------
+
+### Buscar "futbol" (sin acento encuentra "Fútbol") → 200
+GET {{baseUrl}}/buscar?q=futbol
+
+### Buscar sin texto → 400
+GET {{baseUrl}}/buscar
+
+###
+# ---------- 7. GRUPO FAMILIAR (del socio logueado) ----------
+
+### Mis familiares → 200
+GET {{baseUrl}}/grupo-familia
+Authorization: Bearer {{tokenNuevo}}
+
+### Agregar un familiar → 201
+# @name crearFamiliar
+POST {{baseUrl}}/grupo-familia
+Authorization: Bearer {{tokenNuevo}}
+Content-Type: application/json
+
+{ "nombre": "Familiar", "apellido": "Prueba", "dni": "50111222", "parentesco": "Hijo" }
+
+### Agregar otro familiar con el mismo DNI → 409
+POST {{baseUrl}}/grupo-familia
+Authorization: Bearer {{tokenNuevo}}
+Content-Type: application/json
+
+{ "nombre": "Otro", "apellido": "Prueba", "dni": "50111222", "parentesco": "Hijo" }
+
+### Un familiar por id → 200
+GET {{baseUrl}}/grupo-familia/{{idFamiliar}}
+Authorization: Bearer {{tokenNuevo}}
+
+### Modificar un familiar → 200
+PUT {{baseUrl}}/grupo-familia/{{idFamiliar}}
+Authorization: Bearer {{tokenNuevo}}
+Content-Type: application/json
+
+{ "parentesco": "Hija" }
+
+### Borrar un familiar → 204
+DELETE {{baseUrl}}/grupo-familia/{{idFamiliar}}
+Authorization: Bearer {{tokenNuevo}}
+
+###
+# ---------- 8. CIERRE: baja y limpieza ----------
+
+### Socio nuevo: solicitar la baja → 200 (queda "Baja solicitada")
+POST {{baseUrl}}/socios/me/baja
+Authorization: Bearer {{tokenNuevo}}
+
+### Admin: borrar al socio nuevo (se borran también sus cuotas y familiares) → 204
+DELETE {{baseUrl}}/socios/{{idNuevo}}
+Authorization: Bearer {{tokenAdmin}}
