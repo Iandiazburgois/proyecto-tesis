@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { patronLike } = require('./patron');
 
 // Cada actividad se devuelve con el nombre y apellido de su profesor.
 //  usamos LEFT JOIN para que también aparezcan las actividades sin profesor.
@@ -58,5 +59,15 @@ async function borrar(id) {
   );
   return resultado.rowCount === 1;
 }
-
-module.exports = { todas, porId, crear, actualizar, borrar };
+// Para el buscador, busca el texto en el nombre y en la descripción.
+// No importan las mayúsculas (ILIKE) ni las tildes (unaccent).
+async function buscarTexto(texto) {
+  const resultado = await db.query(
+    `${CON_PROFESOR}
+     WHERE unaccent(a.nombre) ILIKE unaccent($1) OR unaccent(a.descripcion) ILIKE unaccent($1)
+     ORDER BY a.nombre`,
+    [patronLike(texto)]
+  );
+  return resultado.rows;
+}
+module.exports = { todas, porId, crear, actualizar, borrar, buscarTexto };

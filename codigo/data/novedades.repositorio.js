@@ -1,6 +1,7 @@
 const db = require('../config/db');
+const { patronLike } = require('./patron');
 
-// Todas las novedades, de la mas nueva a la más vieja
+// Muestra todas las novedades, de la mas nueva a la mas vieja
 async function todas() {
   const resultado = await db.query(
     'SELECT * FROM novedad ORDER BY fecha_publicacion DESC'
@@ -28,7 +29,7 @@ async function crear(datos) {
   return resultado.rows[0];
 }
 
-// Modifica una novedad,lo que no se manda queda como estaba.
+// Modifica una novedad,lo que no se pone queda como estaba.
 // Devuelve la novedad modificada, o da null si no existe.
 async function actualizar(id, datos) {
   const resultado = await db.query(
@@ -44,7 +45,7 @@ async function actualizar(id, datos) {
   return resultado.rows[0] ?? null;
 }
 
-// Borra una novedad. Devuelve true si la borro, false si no existía.
+// Borra una novedad,devuelve true si la borra, false si no existía.
 async function borrar(id) {
   const resultado = await db.query(
     'DELETE FROM novedad WHERE id_novedad = $1',
@@ -52,5 +53,16 @@ async function borrar(id) {
   );
   return resultado.rowCount === 1;
 }
+// Para el buscador: busca el texto en el título y en el contenido.
+// No importan las mayúsculas (ILIKE) ni las tildes (unaccent).
+async function buscarTexto(texto) {
+  const resultado = await db.query(
+    `SELECT * FROM novedad
+     WHERE unaccent(titulo) ILIKE unaccent($1) OR unaccent(contenido) ILIKE unaccent($1)
+     ORDER BY fecha_publicacion DESC`,
+    [patronLike(texto)]
+  );
+  return resultado.rows;
+}
 
-module.exports = { todas, porId, crear, actualizar, borrar };
+module.exports = { todas, porId, crear, actualizar, borrar, buscarTexto };

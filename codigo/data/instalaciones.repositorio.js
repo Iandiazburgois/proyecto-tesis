@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { patronLike } = require('./patron');
 
 // Todas las instalaciones, ordenadas por nombre
 async function todas() {
@@ -47,5 +48,16 @@ async function borrar(id) {
   );
   return resultado.rowCount === 1;
 }
+// Para el buscador: busca el texto en el nombre y en la descripción.
+// No importan las mayúsculas (ILIKE) ni las tildes (unaccent).
+async function buscarTexto(texto) {
+  const resultado = await db.query(
+    `SELECT * FROM instalacion
+     WHERE unaccent(nombre) ILIKE unaccent($1) OR unaccent(descripcion) ILIKE unaccent($1)
+     ORDER BY nombre`,
+    [patronLike(texto)]
+  );
+  return resultado.rows;
+}
 
-module.exports = { todas, porId, crear, actualizar, borrar };
+module.exports = { todas, porId, crear, actualizar, borrar, buscarTexto };
