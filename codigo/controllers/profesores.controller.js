@@ -1,28 +1,81 @@
 const servicio = require('../services/profesores.service');
+const { idValido, faltantes, tomar, demasiadoLargos, responderError } = require('./validar');
 
-// GET /api/profesores
+const CAMPOS = ['nombre', 'apellido'];
+const OBLIGATORIOS = ['nombre', 'apellido'];
+const LARGOS = { nombre: 100, apellido: 100 };
+
+// GET /api/profesores da 200 con la lista
 async function listar(req, res) {
-  res.status(501).json({ error: 'Sin implementar' });
+  const profesores = await servicio.listar();
+  res.json(profesores);
 }
 
-// GET /api/profesores/:id
+// GET /api/profesores/:id da 200, 400 si el id no es válido, 404 si no existe
 async function obtener(req, res) {
-  res.status(501).json({ error: 'Sin implementar' });
+  const id = idValido(req.params.id);
+  if (!id) return res.status(400).json({ error: 'El id debe ser un número' });
+
+  const profesor = await servicio.obtener(id);
+  if (!profesor) return res.status(404).json({ error: 'Profesor no encontrado' });
+
+  res.json(profesor);
 }
 
-// POST /api/profesores
+// POST /api/profesores  cuerpo: { nombre*, apellido* }
+// da 201 con el creado, 400 si faltan datos o son muy largos
 async function crear(req, res) {
-  res.status(501).json({ error: 'Sin implementar' });
+  const body = req.body || {};
+
+  const falta = faltantes(body, OBLIGATORIOS);
+  if (falta.length) return res.status(400).json({ error: 'Faltan campos obligatorios', campos: falta });
+
+  const datos = tomar(body, CAMPOS);
+  const largos = demasiadoLargos(datos, LARGOS);
+  if (largos.length) return res.status(400).json({ error: 'Estos campos son demasiado largos', campos: largos });
+
+  try {
+    const creado = await servicio.crear(datos);
+    res.status(201).json(creado);
+  } catch (e) {
+    responderError(e, res);
+  }
 }
 
-// PUT /api/profesores/:id
+// PUT /api/profesores/:id  da 200, 400, 404
 async function actualizar(req, res) {
-  res.status(501).json({ error: 'Sin implementar' });
+  const id = idValido(req.params.id);
+  if (!id) return res.status(400).json({ error: 'El id debe ser un número' });
+
+  const datos = tomar(req.body || {}, CAMPOS);
+  if (!Object.keys(datos).length) {
+    return res.status(400).json({ error: 'No se envió ningún dato para modificar' });
+  }
+
+  const vacios = faltantes(datos, OBLIGATORIOS.filter((c) => c in datos));
+  if (vacios.length) return res.status(400).json({ error: 'Estos campos no pueden quedar vacíos', campos: vacios });
+
+  const largos = demasiadoLargos(datos, LARGOS);
+  if (largos.length) return res.status(400).json({ error: 'Estos campos son demasiado largos', campos: largos });
+
+  try {
+    const profesor = await servicio.actualizar(id, datos);
+    if (!profesor) return res.status(404).json({ error: 'Profesor no encontrado' });
+    res.json(profesor);
+  } catch (e) {
+    responderError(e, res);
+  }
 }
 
-// DELETE /api/profesores/:id
+// DELETE /api/profesores/:id da 204 sin cuerpo, 400, 404
 async function eliminar(req, res) {
-  res.status(501).json({ error: 'Sin implementar' });
+  const id = idValido(req.params.id);
+  if (!id) return res.status(400).json({ error: 'El id debe ser un número' });
+
+  const borrado = await servicio.eliminar(id);
+  if (!borrado) return res.status(404).json({ error: 'Profesor no encontrado' });
+
+  res.status(204).end();
 }
 
 module.exports = { listar, obtener, crear, actualizar, eliminar };

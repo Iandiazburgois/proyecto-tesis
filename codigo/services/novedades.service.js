@@ -1,15 +1,26 @@
-const repositorio = require('../data/novedades.repositorio');
-const { ErrorDeNegocio } = require('../utils/errores');
+// Las novedades no tienen reglas propias- el servicio pasa todo al repositorio.
 
+const repositorio = require('../data/novedades.repositorio');
 
 async function listar() {
   return repositorio.todas();
 }
 
-// Funciones a escribir:
-// obtener(id)
-// crear(datos, idAutor)
-// actualizar(id, datos)
-// eliminar(id)
+async function obtener(id) {
+  return repositorio.porId(id);
+}
 
-module.exports = { listar };
+// El autor es el admin que está logueado, llega aparte, no desde el cuerpo del pedido
+async function crear(datos, idAutor) {
+  return repositorio.crear({ ...datos, id_autor: idAutor });
+}
+
+async function actualizar(id, datos) {
+  return repositorio.actualizar(id, datos);
+}
+
+async function eliminar(id) {
+  return repositorio.borrar(id);
+}
+
+module.exports = { listar, obtener, crear, actualizar, eliminar };
