@@ -1,5 +1,11 @@
 require('dotenv').config();
 
+// Sin JWT_SECRET no se pueden firmar las sesiones: mejor no arrancar que fallar en el login.
+if (!process.env.JWT_SECRET) {
+  console.error('Falta JWT_SECRET en el .env. Completalo y volvé a iniciar el servidor.');
+  process.exit(1);
+}
+
 const app = require('./app');
 const db = require('./config/db');
 

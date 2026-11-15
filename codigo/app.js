@@ -3,7 +3,8 @@ const cors = require('cors');
 
 const app = express();
 
-app.use(cors());
+// Solo el frontend del sitio puede leer la API desde el navegador.
+app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173' }));
 app.use(express.json());
 
 app.get('/', (req, res) => {
