@@ -1,0 +1,318 @@
+/* =========================================================
+   Estilos del sitio — salen de la guía de estilo (etapa 5)
+   ========================================================= */
+
+/* ---------- 1. Valores de la guía ---------- */
+:root {
+  /* 5.1 Paleta */
+  --blanco: #ffffff;
+  --negro: #1a1a1a;
+  --rojo-acento: #c8102e;
+  --rojo-error: #8b1e1e;
+  --verde: #1b5e20;
+  --gris-claro: #e0e0e0;
+  --gris-medio: #757575; /* solo para lo deshabilitado: no llega a 4,5:1 */
+
+  /* 5.3 Tipografía */
+  --fuente-titulos: 'Oswald', 'Arial Narrow', sans-serif;
+  --fuente-texto: 'Open Sans', Arial, sans-serif;
+
+  /* Escala de espacios */
+  --e1: 4px;
+  --e2: 8px;
+  --e3: 16px;
+  --e4: 24px;
+  --e5: 32px;
+  --e6: 48px;
+
+  /* 5.5 Esquinas redondeadas */
+  --radio-boton: 8px;
+  --radio-campo: 8px;
+  --radio-tarjeta: 12px;
+
+  /* Ancho máximo del contenido en pantallas anchas */
+  --ancho-maximo: 1100px;
+}
+/* ---------- 2. Base ---------- */
+
+/* El ancho de un elemento incluye su borde y su relleno: así las medidas de Figma coinciden */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--blanco);
+  color: var(--negro);
+  font-family: var(--fuente-texto);
+  font-size: 16px;
+  line-height: 24px; /* 5.3: texto general 16/24 */
+}
+
+/* 5.3: títulos en Oswald 400, en mayúsculas como en el prototipo */
+h1,
+h2,
+h3 {
+  font-family: var(--fuente-titulos);
+  font-weight: 400;
+  text-transform: uppercase;
+  margin: 0 0 var(--e3);
+}
+h1 { font-size: 32px; line-height: 40px; }
+h2 { font-size: 24px; line-height: 32px; }
+h3 { font-size: 20px; line-height: 28px; }
+
+p { margin: 0 0 var(--e3); }
+
+a { color: var(--rojo-acento); }
+
+img { max-width: 100%; display: block; }
+
+/* 5.5: foco con contorno negro de 3 px, separado 2 px */
+:focus-visible {
+  outline: 3px solid var(--negro);
+  outline-offset: 2px;
+}
+
+/* Centra el contenido y le da margen a los costados (24 px, como en Figma) */
+.contenedor {
+  width: 100%;
+  max-width: var(--ancho-maximo);
+  margin: 0 auto;
+  padding: 0 var(--e4);
+}
+
+/* Los íconos de Material Symbols */
+.icono {
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ---------- 3. Botones (5.5) ---------- */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e2);
+  min-height: 48px; /* alto cómodo para tocar con el dedo */
+  padding: var(--e2) var(--e4);
+  border-radius: var(--radio-boton);
+  border: 2px solid transparent;
+  font-family: var(--fuente-texto);
+  font-size: 16px;
+  font-weight: 600; /* 5.3: botones en SemiBold */
+  line-height: 24px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Normal: fondo rojo acento y texto blanco (5,88:1) */
+.boton--primario {
+  background: var(--rojo-acento);
+  color: var(--blanco);
+}
+
+/* Secundario: para las acciones de menor importancia */
+.boton--secundario {
+  background: var(--blanco);
+  color: var(--rojo-acento);
+  border-color: var(--rojo-acento);
+}
+
+/* Deshabilitado: gris, como "Ingresando…" mientras se espera la respuesta */
+.boton:disabled {
+  background: var(--gris-claro);
+  color: var(--gris-medio);
+  border-color: var(--gris-claro);
+  cursor: not-allowed;
+}
+
+/* "← Volver": un botón que se ve como texto */
+.volver {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e2);
+  background: none;
+  border: 0;
+  padding: var(--e2) 0;
+  font: inherit;
+  color: var(--negro);
+  cursor: pointer;
+}
+
+/* ---------- 4. Campos de formulario (5.5) ---------- */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e1);
+  margin-bottom: var(--e3);
+}
+
+/* La etiqueta, arriba del campo */
+.campo label {
+  font-weight: 600;
+}
+
+/* Normal: fondo blanco, borde negro de 1 px, esquinas de 8 px */
+.campo__input {
+  min-height: 48px;
+  padding: var(--e2) var(--e3);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-campo);
+  background: var(--blanco);
+  color: var(--negro);
+  font: inherit;
+}
+
+/* Foco: borde de 2 px en rojo acento.
+   El relleno baja 1 px para que el borde más grueso no mueva el texto. */
+.campo__input:focus-visible {
+  outline: none;
+  border: 2px solid var(--rojo-acento);
+  padding: calc(var(--e2) - 1px) calc(var(--e3) - 1px);
+}
+
+/* Error: borde de 2 px en rojo error (también si tiene el foco) */
+.campo__input--error,
+.campo__input--error:focus-visible {
+  border: 2px solid var(--rojo-error);
+  padding: calc(var(--e2) - 1px) calc(var(--e3) - 1px);
+}
+
+/* Deshabilitado: fondo y texto gris */
+.campo__input:disabled {
+  background: var(--gris-claro);
+  color: var(--gris-medio);
+  border-color: var(--gris-claro);
+}
+
+/* El mensaje de error, debajo del campo: ícono warning + texto en rojo error */
+.campo__error {
+  display: flex;
+  align-items: center;
+  gap: var(--e1);
+  margin: 0;
+  color: var(--rojo-error);
+  font-size: 14px;
+}
+
+/* Texto de ayuda debajo del campo, como "Mínimo 6 caracteres." */
+.campo__ayuda {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Los formularios no ocupan todo el ancho en pantallas grandes */
+.formulario {
+  max-width: 480px;
+}
+
+/* ---------- 5. Tarjetas (5.5) ---------- */
+.tarjeta {
+  display: block;
+  background: var(--blanco);
+  border: 1px solid var(--gris-claro);
+  border-radius: var(--radio-tarjeta);
+  overflow: hidden; /* la imagen respeta las esquinas redondeadas */
+  color: var(--negro);
+  text-decoration: none;
+}
+
+/* Foco (cuando la tarjeta es un enlace): borde de 2 px en rojo acento */
+.tarjeta:focus-visible {
+  outline: 2px solid var(--rojo-acento);
+  outline-offset: 0;
+}
+
+/* Imagen arriba, siempre con la misma proporción */
+.tarjeta__imagen {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+/* El contenido: ícono a la izquierda y textos a la derecha */
+.tarjeta__cuerpo {
+  display: flex;
+  gap: var(--e3);
+  padding: var(--e3);
+}
+
+.tarjeta__icono {
+  color: var(--rojo-acento); /* 5.4: íconos de las tarjetas en rojo acento */
+}
+
+/* Título en Oswald 20.
+   Sin mayúsculas: el título de una tarjeta es un dato ("Torneo Anual de Fútbol"),
+   no un título de sección. */
+.tarjeta__titulo {
+  font-size: 20px;
+  line-height: 28px;
+  text-transform: none;
+  margin-bottom: var(--e1);
+}
+
+.tarjeta__texto {
+  margin: 0;
+}
+
+/* Lista de tarjetas: una debajo de otra, con 16 px entre ellas */
+.lista-tarjetas {
+  display: grid;
+  gap: var(--e3);
+  margin-bottom: var(--e5);
+}
+
+/* ---------- 6. Mensajes (5.5) ---------- */
+/* Siempre ícono + texto: el mensaje no depende solo del color */
+.mensaje {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--e2);
+  margin-bottom: var(--e3);
+}
+.mensaje p {
+  margin: 0;
+}
+.mensaje--exito {
+  color: var(--verde);
+}
+.mensaje--error {
+  color: var(--rojo-error);
+}
+
+/* ---------- 7. Estados de la interfaz (6.3) ---------- */
+/* Espera, error y vacío: centrados, con aire arriba y abajo */
+.estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--e3);
+  padding: var(--e5) 0;
+  text-align: center;
+}
+
+/* Vacío: ícono grande en gris medio (5.4: 48 px, decorativo) */
+.estado__icono {
+  color: var(--gris-medio);
+}
+.estado h3 {
+  margin: 0;
+}
+
+/* ---------- 8. Pantalla ancha (7.3) ---------- */
+/* Primero se escribe todo para el celular (arriba).
+   Estas reglas solo se aplican cuando la pantalla es más ancha. */
+@media (min-width: 768px) {
+  .lista-tarjetas {
+    grid-template-columns: repeat(2, 1fr); /* tablet: dos tarjetas por fila */
+  }
+}
+
+@media (min-width: 1024px) {
+  .lista-tarjetas {
+    grid-template-columns: repeat(3, 1fr); /* computadora: tres por fila */
+  }
+}
