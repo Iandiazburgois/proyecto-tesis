@@ -1,0 +1,45 @@
+/* Resumen de la deuda, en un recuadro como en el prototipo */
+.estado-cuota__resumen {
+  border: 1px solid var(--gris-claro);
+  border-radius: var(--radio-tarjeta);
+  padding: var(--e3);
+  margin-bottom: var(--e4);
+}
+
+.estado-cuota__resumen p {
+  margin: 0 0 var(--e1);
+}
+
+/* El total, destacado con la letra de los títulos */
+.estado-cuota__total {
+  font-family: var(--fuente-titulos);
+  font-size: 20px;
+  line-height: 28px;
+  text-transform: uppercase;
+}
+
+/* Estado de cada cuota: ícono + texto, cada uno con su color */
+.estado-cuota__estado {
+  display: flex;
+  align-items: center;
+  gap: var(--e1);
+  margin: var(--e2) 0;
+  font-weight: 600;
+}
+
+.estado-cuota__estado--pagado {
+  color: var(--verde);
+}
+
+.estado-cuota__estado--pendiente {
+  color: var(--rojo-error);
+}
+
+.estado-cuota__estado--revision {
+  color: var(--negro);
+}
+
+.estado-cuota__acciones {
+  display: flex;
+  justify-content: center;
+}
