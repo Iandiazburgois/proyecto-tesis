@@ -1,0 +1,5 @@
+/* Botón de cerrar sesión centrado, debajo de las tarjetas */
+.area-socios__acciones {
+  display: flex;
+  justify-content: center;
+}
