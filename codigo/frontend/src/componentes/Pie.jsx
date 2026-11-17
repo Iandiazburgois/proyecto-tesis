@@ -33,18 +33,20 @@ export default function Pie() {
           <h2>Ubicación</h2>
           <p className="pie__fila">
             <Icono nombre="location_on" />
-            25 de Mayo 148, San Cayetano
+            {/* Enlace para abrir la ubicación en Google Maps (por ejemplo, para pedir cómo llegar) */}
+            <a href="https://maps.app.goo.gl/rfPyof6srZhJbTab6" target="_blank" rel="noreferrer">
+              25 de Mayo 148, San Cayetano
+            </a>
           </p>
-          {/* Captura del mapa; al tocarla se abre el mapa real de OpenStreetMap */}
-          <a
-            href="https://www.openstreetmap.org/search?query=25%20de%20Mayo%20148%2C%20San%20Cayetano"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <img className="pie__mapa" src="/mapa.png" alt="Mapa con la ubicación del club en 25 de Mayo 148" />
-          </a>
-          {/* La licencia de OpenStreetMap pide nombrar a sus autores */}
-          <p className="pie__atribucion">© colaboradores de OpenStreetMap</p>
+          {/* Mapa de Google Maps insertado en la página, con el marcador en la sede del club */}
+          <iframe
+            className="pie__mapa"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3129.275927376402!2d-59.61496062383621!3d-38.342595171847734!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9591e2f8f0356969%3A0x81d45859c374f80!2sSede%20Del%20Club%20Sportivo%20San%20Cayetano!5e0!3m2!1ses!2sar!4v1794947171564!5m2!1ses!2sar"
+            title="Mapa con la ubicación de la sede del club en 25 de Mayo 148, San Cayetano"
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          />
         </section>
       </div>
     </footer>

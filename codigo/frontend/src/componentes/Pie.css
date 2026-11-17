@@ -37,14 +37,12 @@
   overflow-wrap: anywhere;
 }
 
+/* El mapa ocupa todo el ancho y tiene un alto fijo */
 .pie__mapa {
   width: 100%;
+  height: 200px;
+  border: 0;
   border-radius: var(--radio-campo);
-}
-
-.pie__atribucion {
-  font-size: 14px;
-  margin: var(--e1) 0 0;
 }
 
 /* Pantalla ancha: contacto y ubicación lado a lado (7.3) */
