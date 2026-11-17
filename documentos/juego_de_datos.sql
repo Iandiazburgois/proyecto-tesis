@@ -53,18 +53,20 @@ INSERT INTO grupo_familia (id_socio_titular, nombre, apellido, dni, parentesco, 
 (3, 'Tomás', 'Rodríguez', '54456789', 'Hijo', 'https://storage.club.com/dni/fam_3_frente.jpg', 'https://storage.club.com/dni/fam_3_dorso.jpg');
 
 -- 6. CUOTAS (agosto a octubre, para que haya deuda acumulada que mostrar)
+-- Cuota social: $3.000 por persona (titular + familiares), en una sola cuota por grupo
+--   Juan: 3 personas = 9.000 / María: 1 = 3.000 / Carlos: 2 = 6.000 / Ana: 1 = 3.000
 INSERT INTO cuota (id_socio, mes_periodo, anio_periodo, monto, fecha_vencimiento, estado_pago, medio_pago, fecha_pago, comprobante_url) VALUES
-(1,  8, 2026, 15000.00, '2026-08-10', 'Pagado', 'Mercado Pago', '2026-08-04 11:00:00', 'https://storage.club.com/comprobantes/comp_1_08.pdf'),
-(1,  9, 2026, 15000.00, '2026-09-10', 'Pagado', 'Mercado Pago', '2026-09-06 18:45:00', 'https://storage.club.com/comprobantes/comp_1_09.pdf'),
-(1, 10, 2026, 15000.00, '2026-10-10', 'Pagado', 'Mercado Pago', '2026-10-05 14:30:00', 'https://storage.club.com/comprobantes/comp_1_10.pdf'),
-(2,  8, 2026, 10000.00, '2026-08-10', 'Pagado', 'Efectivo', '2026-08-09 10:20:00', NULL),
-(2,  9, 2026, 10000.00, '2026-09-10', 'Pendiente', NULL, NULL, NULL),
-(2, 10, 2026, 10000.00, '2026-10-10', 'Pendiente', NULL, NULL, NULL),
-(3,  8, 2026, 15000.00, '2026-08-10', 'Pendiente', NULL, NULL, NULL),
-(3,  9, 2026, 15000.00, '2026-09-10', 'Pendiente', NULL, NULL, NULL),
-(3, 10, 2026, 15000.00, '2026-10-10', 'Pendiente', NULL, NULL, NULL),
-(4,  9, 2026,  8000.00, '2026-09-10', 'Pagado', 'Transferencia', '2026-09-03 09:15:00', 'https://storage.club.com/comprobantes/comp_4_09.pdf'),
-(4, 10, 2026,  8000.00, '2026-10-10', 'En revisión', 'Transferencia', '2026-10-09 20:10:00', 'https://storage.club.com/comprobantes/comp_4_10.pdf');
+(1,  8, 2026,  9000.00, '2026-08-10', 'Pagado', 'Mercado Pago', '2026-08-04 11:00:00', 'https://storage.club.com/comprobantes/comp_1_08.pdf'),
+(1,  9, 2026,  9000.00, '2026-09-10', 'Pagado', 'Mercado Pago', '2026-09-06 18:45:00', 'https://storage.club.com/comprobantes/comp_1_09.pdf'),
+(1, 10, 2026,  9000.00, '2026-10-10', 'Pagado', 'Mercado Pago', '2026-10-05 14:30:00', 'https://storage.club.com/comprobantes/comp_1_10.pdf'),
+(2,  8, 2026,  3000.00, '2026-08-10', 'Pagado', 'Efectivo', '2026-08-09 10:20:00', NULL),
+(2,  9, 2026,  3000.00, '2026-09-10', 'Pendiente', NULL, NULL, NULL),
+(2, 10, 2026,  3000.00, '2026-10-10', 'Pendiente', NULL, NULL, NULL),
+(3,  8, 2026,  6000.00, '2026-08-10', 'Pendiente', NULL, NULL, NULL),
+(3,  9, 2026,  6000.00, '2026-09-10', 'Pendiente', NULL, NULL, NULL),
+(3, 10, 2026,  6000.00, '2026-10-10', 'Pendiente', NULL, NULL, NULL),
+(4,  9, 2026,  3000.00, '2026-09-10', 'Pagado', 'Transferencia', '2026-09-03 09:15:00', 'https://storage.club.com/comprobantes/comp_4_09.pdf'),
+(4, 10, 2026,  3000.00, '2026-10-10', 'En revisión', 'Transferencia', '2026-10-09 20:10:00', 'https://storage.club.com/comprobantes/comp_4_10.pdf');
 
 -- 7. NOVEDADES (publicadas por el admin, id_autor = 5)
 INSERT INTO novedad (titulo, contenido, imagen_url, fecha_publicacion, destacado, id_autor) VALUES
@@ -76,7 +78,7 @@ INSERT INTO novedad (titulo, contenido, imagen_url, fecha_publicacion, destacado
 ('Básquet Infantil suma una categoría', 'La escuelita de básquet abre una nueva categoría para chicos de 13 y 14 años. Las prácticas son martes y jueves.', 'https://storage.club.com/novedades/basquet_categoria.jpg', '2026-09-15 18:00:00', false, 5),
 ('Asamblea anual de socios', 'Se convoca a todos los socios a la asamblea anual ordinaria, el viernes 30 en el salón de usos múltiples a las 20 hs.', NULL, '2026-09-18 10:30:00', true, 5),
 ('Clínica de tenis de mesa', 'Este viernes habrá una clínica técnica de tenis de mesa abierta a socios y no socios. Traer paleta propia si tienen.', 'https://storage.club.com/novedades/clinica_ping_pong.jpg', '2026-09-20 15:00:00', false, 5),
-('Recordatorio: vencimiento de cuotas', 'Les recordamos que la cuota social vence el día 10 de cada mes. Pueden pagar por Mercado Pago, transferencia o en secretaría.', NULL, '2026-09-25 09:00:00', false, 5),
+('Recordatorio: vencimiento de cuotas', 'Les recordamos que la cuota social vence el día 10 de cada mes. Pueden pagar por transferencia al alias sportivo.sc o en secretaría.', NULL, '2026-09-25 09:00:00', false, 5),
 ('Cena de aniversario del club', 'Celebramos un nuevo aniversario del Club Sportivo San Cayetano con una cena para socios y familias. Las entradas se venden en secretaría.', 'https://storage.club.com/novedades/cena_aniversario.jpg', '2026-09-28 19:00:00', true, 5),
 ('Nuevas luces en la cancha de fútbol 11', 'Terminamos el recambio de la iluminación LED de la cancha principal, gracias al aporte de nuestros sponsors.', 'https://storage.club.com/novedades/luces_cancha.jpg', '2026-10-05 17:45:00', false, 5),
 ('Colonia de verano: preinscripción', 'Ya está abierta la preinscripción a la colonia de verano para hijos de socios. Habrá natación, deportes y juegos recreativos.', 'https://storage.club.com/novedades/colonia.jpg', '2026-10-08 10:00:00', true, 5),

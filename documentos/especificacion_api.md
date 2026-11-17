@@ -23,7 +23,7 @@ Separamos la API en capas, como vimos en clase. La **ruta** recibe el pedido y s
 - Si en la dirección va un id (`/novedades/5`) y no es un número, responde **400**. Si es un número pero no existe, responde **404**.
 - Cuando algo sale mal, la respuesta siempre tiene la forma `{ "error": "mensaje" }`. Si faltan datos, también dice cuáles: `{ "campos": [...] }`.
 - En los `PUT` se puede mandar solo lo que se quiere cambiar. Lo que no se manda queda como estaba.
-- Los montos de las cuotas se devuelven como número (`15000` y no `"15000.00"`).
+- Los montos de las cuotas se devuelven como número (`3000` y no `"3000.00"`).
 - **409** quiere decir que el pedido está bien armado, pero choca con algo que ya está en la base. Por ejemplo, registrarse con un email que ya usa otro socio, o mandar el comprobante de una cuota que ya está pagada.
 - **500** quiere decir que falló el servidor. El detalle del error se ve en la terminal, nunca en la respuesta, para no mostrarle información interna a nadie de afuera.
 
