@@ -1,0 +1,18 @@
+/* El formulario no ocupa toda la pantalla en una computadora: queda centrado y angosto */
+.ingresar {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Botones centrados, uno debajo del otro, como en el prototipo */
+.ingresar__acciones {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--e2);
+  margin-top: var(--e4);
+}
+
+.ingresar__acciones p {
+  margin: 0;
+}
