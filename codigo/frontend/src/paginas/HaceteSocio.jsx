@@ -5,7 +5,7 @@ import Campo from '../componentes/Campo';
 import { Mensaje } from '../componentes/Estados';
 import Icono from '../componentes/Icono';
 import { pedir } from '../servicios/api';
-import { esDni, esEmail } from '../servicios/validaciones';
+import { edad, esDni, esEmail } from '../servicios/validaciones';
 import './HaceteSocio.css';
 
 // Datos del titular, vacíos al empezar
@@ -18,6 +18,11 @@ const TITULAR_VACIO = {
   email: '',
   password: '',
 };
+
+// El titular tiene que ser mayor de edad (igual que en la API)
+const EDAD_MINIMA = 18;
+// Más de 110 años es casi seguro un error al escribir la fecha
+const EDAD_MAXIMA = 110;
 
 // Datos de un familiar, vacíos al agregarlo
 const FAMILIAR_VACIO = { nombre: '', apellido: '', dni: '', parentesco: '' };
@@ -35,14 +40,20 @@ function validarTitular(titular) {
     errores.dni = 'El DNI tiene que tener 7 u 8 números, sin puntos.';
   }
 
-  if (titular.fecha_nacimiento === '') {
+  if (!titular.fecha_nacimiento) {
     errores.fecha_nacimiento = 'Ingresá tu fecha de nacimiento.';
   } else if (titular.fecha_nacimiento > hoy) {
     errores.fecha_nacimiento = 'La fecha no puede ser posterior a hoy.';
+  } else if (edad(titular.fecha_nacimiento) > EDAD_MAXIMA) {
+    errores.fecha_nacimiento = 'Revisá la fecha de nacimiento.';
+  } else if (edad(titular.fecha_nacimiento) < EDAD_MINIMA) {
+    errores.fecha_nacimiento = `Para registrarte como titular tenés que tener al menos ${EDAD_MINIMA} años. Si sos menor, pedile a tu mamá, papá o tutor que se registre y te sume como familiar.`;
   }
 
-  // El teléfono es opcional: solo se revisa si se completó
-  if (titular.telefono.trim() !== '' && !/^[0-9+\-\s]+$/.test(titular.telefono)) {
+  // Validar si está vacío o si tiene un formato incorrecto
+  if (!titular.telefono.trim()) {
+    errores.telefono = 'Ingresá tu teléfono.';
+  } else if (!/^[0-9+\-\s]+$/.test(titular.telefono)) {
     errores.telefono = 'El teléfono solo puede tener números, espacios, + y -.';
   }
 
@@ -147,7 +158,7 @@ export default function HaceteSocio() {
       apellido: titular.apellido.trim(),
       dni: titular.dni.trim(),
       fecha_nacimiento: titular.fecha_nacimiento,
-      telefono: titular.telefono.trim() || undefined,
+      telefono: titular.telefono.trim(),
       email: titular.email.trim(),
       password: titular.password,
     };
@@ -214,7 +225,7 @@ export default function HaceteSocio() {
             value={titular.dni} onChange={cambiar} error={errores.dni} />
           <Campo id="fecha_nacimiento" etiqueta="Fecha de nacimiento" type="date" autoComplete="bday"
             value={titular.fecha_nacimiento} onChange={cambiar} error={errores.fecha_nacimiento} />
-          <Campo id="telefono" etiqueta="Teléfono (opcional)" type="tel" autoComplete="tel" maxLength={30}
+          <Campo id="telefono" etiqueta="Teléfono" type="tel" autoComplete="tel" maxLength={30} 
             value={titular.telefono} onChange={cambiar} error={errores.telefono} />
         </div>
         <p className="hacete-socio__nota">La foto del DNI se presenta en secretaría al confirmar el alta.</p>
@@ -228,8 +239,8 @@ export default function HaceteSocio() {
         </div>
 
         <h2>Grupo familiar</h2>
-        <p className="hacete-socio__nota">Opcional. Sumá a los familiares que se asocian con vos.</p>
-
+        <p className="hacete-socio__nota">La cuota social es de $3.000 por mes por persona, incluidos los menores. El titular paga una sola cuota por todo el grupo. Los menores de 18 se suman acá como familiares.</p>
+    
         {/* Un bloque por familiar; el id lleva el número para que no se repita */}
         {familiares.map((familiar, i) => {
           const err = erroresFamiliares[i] || {};

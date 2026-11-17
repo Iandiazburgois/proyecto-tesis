@@ -4,6 +4,8 @@
 # Antes: base cargada con esquema.sql y juego_de_datos.sql, y el servidor corriendo (npm run dev).
 # Uso: "Send Request" sobre cada pedido, en orden ya que varios usan el token o el id de uno anterior.
 # El título de cada pedido dice el código esperado. Al final se borra lo creado.
+# Ojo: "Emitir cuotas" crea las cuotas de noviembre de los socios del juego de datos.
+# Después de probar, volver a cargar esquema.sql y juego_de_datos.sql.
 # Usuarios de prueba datos ficticios: contraseña 123456.
 
 @baseUrl = http://localhost:3000/api
@@ -49,7 +51,7 @@ POST {{baseUrl}}/auth/registro
 Content-Type: application/json
 
 {
-  "socio": { "nombre": "Prueba", "apellido": "Rest", "dni": "{{$randomInt 10000000 99999999}}", "email": "prueba{{$randomInt 10000000 99999999}}@email.com", "password": "123456", "fecha_nacimiento": "1995-06-15", "rol": "admin" },
+  "socio": { "nombre": "Prueba", "apellido": "Rest", "dni": "{{$randomInt 10000000 99999999}}", "email": "prueba{{$randomInt 10000000 99999999}}@email.com", "password": "123456", "fecha_nacimiento": "1995-06-15", "telefono": "2983000000", "rol": "admin" },
   "familiares": [ { "nombre": "Hija", "apellido": "Rest", "dni": "{{$randomInt 900000000 999999999}}", "parentesco": "Hija" } ]
 }
 
@@ -57,13 +59,31 @@ Content-Type: application/json
 POST {{baseUrl}}/auth/registro
 Content-Type: application/json
 
-{ "socio": { "nombre": "X", "apellido": "Y", "dni": "11111111", "email": "juan.perez@email.com", "password": "123456", "fecha_nacimiento": "1990-01-01" } }
+{ "socio": { "nombre": "X", "apellido": "Y", "dni": "11111111", "email": "juan.perez@email.com", "password": "123456", "fecha_nacimiento": "1990-01-01", "telefono": "2983000000" } }
 
 ### Registro sin datos obligatorios → 400
 POST {{baseUrl}}/auth/registro
 Content-Type: application/json
 
 { "socio": {} }
+
+### Registro sin teléfono → 400 (campos: ["telefono"])
+POST {{baseUrl}}/auth/registro
+Content-Type: application/json
+
+{ "socio": { "nombre": "Sin", "apellido": "Telefono", "dni": "{{$randomInt 10000000 99999999}}", "email": "prueba{{$randomInt 10000000 99999999}}@email.com", "password": "123456", "fecha_nacimiento": "1990-04-10" } }
+
+### Registro de un menor como titular → 400 (los menores se suman como familiares)
+POST {{baseUrl}}/auth/registro
+Content-Type: application/json
+
+{ "socio": { "nombre": "Menor", "apellido": "Prueba", "dni": "{{$randomInt 10000000 99999999}}", "email": "prueba{{$randomInt 10000000 99999999}}@email.com", "password": "123456", "fecha_nacimiento": "2012-04-10", "telefono": "2983000000" } }
+
+### Registro con una fecha de nacimiento demasiado vieja → 400
+POST {{baseUrl}}/auth/registro
+Content-Type: application/json
+
+{ "socio": { "nombre": "Muy", "apellido": "Viejo", "dni": "{{$randomInt 10000000 99999999}}", "email": "prueba{{$randomInt 10000000 99999999}}@email.com", "password": "123456", "fecha_nacimiento": "1900-01-01", "telefono": "2983000000" } }
 
 ### Login del socio recién registrado → 200
 # @name loginNuevo
@@ -140,20 +160,20 @@ Content-Type: application/json
 GET {{baseUrl}}/cuotas/mias
 Authorization: Bearer {{token}}
 
-### Admin: crear una cuota para el socio nuevo → 201
+### Admin: crear una cuota para el socio nuevo → 201 (titular + 1 familiar = $6.000)
 # @name crearCuota
 POST {{baseUrl}}/cuotas
 Authorization: Bearer {{tokenAdmin}}
 Content-Type: application/json
 
-{ "id_socio": {{idNuevo}}, "mes_periodo": 11, "anio_periodo": 2026, "monto": 15000, "fecha_vencimiento": "2026-11-10" }
+{ "id_socio": {{idNuevo}}, "mes_periodo": 11, "anio_periodo": 2026, "monto": 6000, "fecha_vencimiento": "2026-11-10" }
 
 ### Admin: la misma cuota otra vez → 409
 POST {{baseUrl}}/cuotas
 Authorization: Bearer {{tokenAdmin}}
 Content-Type: application/json
 
-{ "id_socio": {{idNuevo}}, "mes_periodo": 11, "anio_periodo": 2026, "monto": 15000, "fecha_vencimiento": "2026-11-10" }
+{ "id_socio": {{idNuevo}}, "mes_periodo": 11, "anio_periodo": 2026, "monto": 6000, "fecha_vencimiento": "2026-11-10" }
 
 ### Admin: cuotas pendientes → 200
 GET {{baseUrl}}/cuotas?estado=Pendiente
@@ -187,6 +207,39 @@ Content-Type: application/json
 ### Admin: borrar la cuota → 204
 DELETE {{baseUrl}}/cuotas/{{idCuota}}
 Authorization: Bearer {{tokenAdmin}}
+
+### Admin: emitir las cuotas de noviembre → 200 { "emitidas": 4, "ya_tenian": 0 }
+# Socios activos: Juan $9.000, María $3.000, Ana $3.000 y el socio nuevo $6.000 (Carlos está inactivo)
+POST {{baseUrl}}/cuotas/emitir
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "mes": 11, "anio": 2026 }
+
+### Admin: emitir otra vez el mismo mes → 200 { "emitidas": 0, "ya_tenian": 4 } (no duplica)
+POST {{baseUrl}}/cuotas/emitir
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "mes": 11, "anio": 2026 }
+
+### Socio nuevo: ve su cuota emitida de $6.000 → 200
+GET {{baseUrl}}/cuotas/mias
+Authorization: Bearer {{tokenNuevo}}
+
+### Admin: emitir sin mes → 400
+POST {{baseUrl}}/cuotas/emitir
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "anio": 2026 }
+
+### Socio: emitir cuotas → 403 (solo el admin)
+POST {{baseUrl}}/cuotas/emitir
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "mes": 11, "anio": 2026 }
 
 ###
 # ---------- 5. CONTENIDO DEL SITIO (listar y ver son públicos; el resto, solo admin) ----------

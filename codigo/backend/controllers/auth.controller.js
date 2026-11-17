@@ -4,6 +4,9 @@ const { faltantes, demasiadoLargos, EMAIL_RE, esFecha, responderError } = requir
 // Largo máximo de cada columna (VARCHAR)
 const LARGOS_SOCIO = { nombre: 100, apellido: 100, email: 150, telefono: 30, dni_frente_url: 255, dni_dorso_url: 255 };
 const LARGOS_FAMILIAR = { nombre: 100, apellido: 100, parentesco: 50, dni_frente_url: 255, dni_dorso_url: 255 };
+// El titular tiene que ser mayor de edad: los menores se suman como familiares de un adulto
+const EDAD_MINIMA = 18;
+
 
 // POST /api/auth/registro
 // cuerpo: { socio: { nombre*, apellido*, dni*, email*, password*, fecha_nacimiento*, telefono,
@@ -18,7 +21,7 @@ async function registro(req, res) {
   if (!s || typeof s !== 'object') {
     return res.status(400).json({ error: 'Falta el objeto socio en el cuerpo' });
   }
-  const falta = faltantes(s, ['nombre', 'apellido', 'dni', 'email', 'password', 'fecha_nacimiento']);
+  const falta = faltantes(s, ['nombre', 'apellido', 'dni', 'email', 'password', 'fecha_nacimiento', 'telefono']);
   if (falta.length) return res.status(400).json({ error: 'Faltan campos obligatorios', campos: falta });
   if (!EMAIL_RE.test(s.email)) return res.status(400).json({ error: 'El email no tiene un formato válido' });
   if (String(s.password).length < 6) {
@@ -27,6 +30,13 @@ async function registro(req, res) {
   if (!esFecha(s.fecha_nacimiento)) {
     return res.status(400).json({ error: 'fecha_nacimiento tiene que ser una fecha válida AAAA-MM-DD' });
   }
+
+  if (edad(s.fecha_nacimiento) < EDAD_MINIMA) {
+    return res.status(400).json({
+      error: `Para registrarte como socio titular tenés que tener al menos ${EDAD_MINIMA} años. Los menores se suman como familiares de un adulto.`,
+    });
+  }
+
   if (String(s.dni).trim().length > 20) return res.status(400).json({ error: 'El DNI no puede tener más de 20 caracteres' });
   const largos = demasiadoLargos(s, LARGOS_SOCIO);
   if (largos.length) return res.status(400).json({ error: 'Hay campos demasiado largos', campos: largos });
@@ -61,6 +71,17 @@ async function registro(req, res) {
   } catch (e) {
     responderError(e, res);
   }
+}
+
+// Años cumplidos a hoy, a partir de una fecha "AAAA-MM-DD"
+function edad(fecha) {
+  const hoy = new Date();
+  const nacimiento = new Date(`${fecha}T00:00:00`);
+  let anios = hoy.getFullYear() - nacimiento.getFullYear();
+  // Si este año todavía no cumplió, se resta uno
+  const mes = hoy.getMonth() - nacimiento.getMonth();
+  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) anios--;
+  return anios;
 }
 
 // POST /api/auth/login  cuerpo: { usuario*, password* }  (usuario = email o DNI)

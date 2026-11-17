@@ -1,0 +1,27 @@
+/* Enviar comprobante: columna angosta y centrada, como los otros formularios */
+.enviar-comprobante {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--e3);
+}
+
+/* Estado de la cuota en rojo, como en el prototipo */
+.enviar-comprobante__estado {
+  color: var(--rojo-error);
+  font-weight: 600;
+  margin-top: var(--e3);
+}
+
+.enviar-comprobante__boton {
+  align-self: center;
+}
+
+/* Mensaje de éxito y botón para volver */
+.enviar-comprobante__final {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--e3);
+}
