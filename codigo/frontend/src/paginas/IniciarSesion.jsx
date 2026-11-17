@@ -5,9 +5,10 @@ import Campo from '../componentes/Campo';
 import { Mensaje } from '../componentes/Estados';
 import { pedir } from '../servicios/api';
 import { guardarSesion } from '../servicios/sesion';
+import { esDni, esEmail } from '../servicios/validaciones';
 import './IniciarSesion.css';
 
-// Revisa los datos antes de mandarlos a la API (7.4).
+// Revisa los datos antes de mandarlos a la API.
 // Devuelve un objeto con un mensaje por cada campo que tiene un problema.
 function validar(usuario, password) {
   const errores = {};
@@ -16,12 +17,12 @@ function validar(usuario, password) {
   if (texto === '') {
     errores.usuario = 'Ingresá tu email o tu DNI.';
   } else if (texto.includes('@')) {
-    // Si tiene @, se trata como email: algo@algo.algo
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(texto)) {
+    // Si tiene @, se trata como email
+    if (!esEmail(texto)) {
       errores.usuario = 'Revisá el email: tiene que ser como nombre@correo.com.';
     }
-  } else if (!/^\d{7,8}$/.test(texto)) {
-    // Si no tiene @, se trata como DNI: 7 u 8 números
+  } else if (!esDni(texto)) {
+    // Si no tiene @, se trata como DNI
     errores.usuario = 'El DNI tiene que tener 7 u 8 números, sin puntos.';
   }
 

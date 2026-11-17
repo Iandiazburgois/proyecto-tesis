@@ -1,0 +1,43 @@
+/* Formulario largo: en la compu se limita el ancho para que se lea cómodo */
+.hacete-socio {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Títulos de cada bloque (Datos personales, Datos de ingreso, Grupo familiar) */
+.hacete-socio h2 {
+  font-size: 20px;
+  line-height: 28px;
+  margin-top: var(--e5);
+}
+
+/* En el celular, un campo debajo del otro */
+.hacete-socio__campos {
+  display: grid;
+  column-gap: var(--e3);
+}
+
+.hacete-socio__nota {
+  font-size: 14px;
+}
+
+.hacete-socio__acciones {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--e4);
+}
+
+/* En la compu, dos campos por fila (como en el wireframe de PC) */
+@media (min-width: 768px) {
+  .hacete-socio__campos {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Pantalla de éxito (03c): mensaje y botón centrados */
+.hacete-socio__exito {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--e3);
+}
