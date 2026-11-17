@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import CabeceraPantalla from '../componentes/CabeceraPantalla';
 import Campo from '../componentes/Campo';
 import { Mensaje } from '../componentes/Estados';
+import Icono from '../componentes/Icono';
 import { pedir } from '../servicios/api';
 import { esDni, esEmail } from '../servicios/validaciones';
 import './HaceteSocio.css';
@@ -17,6 +18,9 @@ const TITULAR_VACIO = {
   email: '',
   password: '',
 };
+
+// Datos de un familiar, vacíos al agregarlo
+const FAMILIAR_VACIO = { nombre: '', apellido: '', dni: '', parentesco: '' };
 
 // Revisa los datos del titular antes de mandarlos a la API.
 // Devuelve un objeto con un mensaje por cada campo que tiene un problema.
@@ -55,13 +59,34 @@ function validarTitular(titular) {
   return errores;
 }
 
+// Un familiar está vacío si no se completó ninguno de sus campos
+function estaVacio(familiar) {
+  return Object.values(familiar).every((valor) => valor.trim() === '');
+}
+
+// Revisa un familiar: si se completó alguno de sus datos, se piden todos
+function validarFamiliar(familiar) {
+  const errores = {};
+  if (estaVacio(familiar)) return errores;
+
+  if (familiar.nombre.trim() === '') errores.nombre = 'Ingresá el nombre.';
+  if (familiar.apellido.trim() === '') errores.apellido = 'Ingresá el apellido.';
+  if (!esDni(familiar.dni.trim())) errores.dni = 'El DNI tiene que tener 7 u 8 números, sin puntos.';
+  if (familiar.parentesco.trim() === '') errores.parentesco = 'Indicá el parentesco.';
+
+  return errores;
+}
+
 // R2 — Registro (03, 03b y 03c del prototipo)
 // API: POST /auth/registro
 export default function HaceteSocio() {
   // Un solo objeto con todos los datos del titular
   const [titular, setTitular] = useState(TITULAR_VACIO);
-  // Mensajes de error de cada campo
+  // Lista de familiares: arranca con uno en blanco, como en el prototipo
+  const [familiares, setFamiliares] = useState([FAMILIAR_VACIO]);
+  // Mensajes de error del titular y de cada familiar (una lista, en el mismo orden)
   const [errores, setErrores] = useState({});
+  const [erroresFamiliares, setErroresFamiliares] = useState([]);
   // Error general de la API (servidor apagado, error 500...)
   const [errorApi, setErrorApi] = useState('');
   // true mientras se espera la respuesta: el botón queda gris
@@ -69,11 +94,28 @@ export default function HaceteSocio() {
   // true cuando el registro salió bien: se muestra la pantalla de éxito (03c)
   const [registrado, setRegistrado] = useState(false);
 
-  // Una sola función para todos los campos: usa el "name" del campo para saber cuál cambió
+  // Una sola función para todos los campos del titular: usa el "name" del campo
   function cambiar(e) {
     setTitular({ ...titular, [e.target.name]: e.target.value });
     // Al corregir un campo, se borra su error
     setErrores({ ...errores, [e.target.name]: undefined });
+  }
+
+  // Cambia un dato de un familiar: se arma una lista nueva con ese familiar actualizado
+  function cambiarFamiliar(indice, campo, valor) {
+    setFamiliares(familiares.map((f, i) => (i === indice ? { ...f, [campo]: valor } : f)));
+    setErroresFamiliares(
+      erroresFamiliares.map((err, i) => (i === indice ? { ...err, [campo]: undefined } : err))
+    );
+  }
+
+  function agregarFamiliar() {
+    setFamiliares([...familiares, FAMILIAR_VACIO]);
+  }
+
+  function quitarFamiliar(indice) {
+    setFamiliares(familiares.filter((_, i) => i !== indice));
+    setErroresFamiliares(erroresFamiliares.filter((_, i) => i !== indice));
   }
 
   async function enviar(e) {
@@ -82,12 +124,20 @@ export default function HaceteSocio() {
     setErrorApi('');
 
     const nuevosErrores = validarTitular(titular);
+    const nuevosErroresFamiliares = familiares.map(validarFamiliar);
     setErrores(nuevosErrores);
+    setErroresFamiliares(nuevosErroresFamiliares);
 
-    // Si hay errores, se lleva el cursor al primer campo con problema y no se sigue
-    const campos = Object.keys(nuevosErrores);
-    if (campos.length > 0) {
-      document.getElementById(campos[0]).focus();
+    // Si hay errores, se lleva el cursor al primer campo con problema (primero el titular) y no se sigue
+    const camposTitular = Object.keys(nuevosErrores);
+    if (camposTitular.length > 0) {
+      document.getElementById(camposTitular[0]).focus();
+      return;
+    }
+    const conError = nuevosErroresFamiliares.findIndex((err) => Object.keys(err).length > 0);
+    if (conError !== -1) {
+      const campo = Object.keys(nuevosErroresFamiliares[conError])[0];
+      document.getElementById(`familiar-${conError}-${campo}`).focus();
       return;
     }
 
@@ -102,9 +152,19 @@ export default function HaceteSocio() {
       password: titular.password,
     };
 
+    // Solo los familiares que se completaron
+    const familiaresCompletos = familiares
+      .filter((f) => !estaVacio(f))
+      .map((f) => ({
+        nombre: f.nombre.trim(),
+        apellido: f.apellido.trim(),
+        dni: f.dni.trim(),
+        parentesco: f.parentesco.trim(),
+      }));
+
     setEnviando(true);
     try {
-      await pedir('/auth/registro', 'POST', { socio, familiares: [] });
+      await pedir('/auth/registro', 'POST', { socio, familiares: familiaresCompletos });
       setRegistrado(true);
       // Se vuelve arriba para que se vea el mensaje de éxito
       window.scrollTo(0, 0);
@@ -166,6 +226,41 @@ export default function HaceteSocio() {
           <Campo id="password" etiqueta="Contraseña" type="password" autoComplete="new-password"
             ayuda="Mínimo 6 caracteres." value={titular.password} onChange={cambiar} error={errores.password} />
         </div>
+
+        <h2>Grupo familiar</h2>
+        <p className="hacete-socio__nota">Opcional. Sumá a los familiares que se asocian con vos.</p>
+
+        {/* Un bloque por familiar; el id lleva el número para que no se repita */}
+        {familiares.map((familiar, i) => {
+          const err = erroresFamiliares[i] || {};
+          return (
+            <fieldset key={i} className="hacete-socio__familiar">
+              <legend>Familiar {i + 1}</legend>
+              <div className="hacete-socio__campos">
+                <Campo id={`familiar-${i}-nombre`} etiqueta="Nombre" maxLength={100}
+                  value={familiar.nombre} error={err.nombre}
+                  onChange={(e) => cambiarFamiliar(i, 'nombre', e.target.value)} />
+                <Campo id={`familiar-${i}-apellido`} etiqueta="Apellido" maxLength={100}
+                  value={familiar.apellido} error={err.apellido}
+                  onChange={(e) => cambiarFamiliar(i, 'apellido', e.target.value)} />
+                <Campo id={`familiar-${i}-dni`} etiqueta="DNI" inputMode="numeric" placeholder="Sin puntos" maxLength={8}
+                  value={familiar.dni} error={err.dni}
+                  onChange={(e) => cambiarFamiliar(i, 'dni', e.target.value)} />
+                <Campo id={`familiar-${i}-parentesco`} etiqueta="Parentesco" placeholder="Ej.: hijo, cónyuge" maxLength={50}
+                  value={familiar.parentesco} error={err.parentesco}
+                  onChange={(e) => cambiarFamiliar(i, 'parentesco', e.target.value)} />
+              </div>
+              <button type="button" className="boton boton--secundario" onClick={() => quitarFamiliar(i)}>
+                Quitar
+              </button>
+            </fieldset>
+          );
+        })}
+
+        <button type="button" className="hacete-socio__agregar" onClick={agregarFamiliar}>
+          <Icono nombre="add" />
+          {familiares.length === 0 ? 'Agregar familiar' : 'Agregar otro familiar'}
+        </button>
 
         {/* Error de la API (servidor apagado, error 500...) */}
         {errorApi && <Mensaje tipo="error">{errorApi}</Mensaje>}

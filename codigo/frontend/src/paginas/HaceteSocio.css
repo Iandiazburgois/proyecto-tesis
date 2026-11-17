@@ -41,3 +41,31 @@
   align-items: center;
   gap: var(--e3);
 }
+
+/* Cada familiar en su recuadro, con el estilo de las tarjetas */
+.hacete-socio__familiar {
+  border: 1px solid var(--gris-claro);
+  border-radius: var(--radio-tarjeta);
+  padding: var(--e3);
+  margin: 0 0 var(--e3);
+}
+
+.hacete-socio__familiar legend {
+  font-weight: 600;
+  padding: 0 var(--e1);
+}
+
+/* "+ Agregar otro familiar": un botón que se ve como enlace rojo, como en el prototipo */
+.hacete-socio__agregar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e1);
+  min-height: 48px;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--rojo-acento);
+  cursor: pointer;
+}
