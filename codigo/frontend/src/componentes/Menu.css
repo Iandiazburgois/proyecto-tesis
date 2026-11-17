@@ -1,0 +1,77 @@
+/* Fondo oscuro que tapa la página (como el "Fondo 40%" de Figma) */
+.menu__fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* El panel del menú: 300 px de ancho, desde la izquierda */
+.menu {
+  width: min(300px, 85vw);
+  height: 100%;
+  background: var(--blanco);
+  padding: var(--e4);
+  animation: entrar 0.3s ease-out;
+}
+
+/* Entra deslizándose desde la izquierda, como en el prototipo */
+@keyframes entrar {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+/* Si la persona pidió menos movimiento en su sistema, sin animación */
+@media (prefers-reduced-motion: reduce) {
+  .menu {
+    animation: none;
+  }
+}
+
+.menu__encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu__encabezado h2 {
+  margin: 0;
+}
+
+.menu__cerrar {
+  min-width: 48px;
+  min-height: 48px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.menu__lista {
+  list-style: none;
+  margin: var(--e3) 0 0;
+  padding: 0;
+}
+
+/* Cada opción: Oswald 20 en mayúsculas, 48 px de alto para tocar con el dedo */
+.menu__lista a,
+.menu__lista button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 48px;
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: var(--fuente-titulos);
+  font-size: 20px;
+  text-transform: uppercase;
+  color: var(--negro);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* La pantalla en la que estás se marca en rojo */
+.menu__lista .active {
+  color: var(--rojo-acento);
+}

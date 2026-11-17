@@ -1,0 +1,76 @@
+.encabezado {
+  background: var(--blanco);
+  border-bottom: 1px solid var(--gris-claro);
+}
+
+/* En el celular: escudo y nombre arriba, accesos abajo (como en el prototipo) */
+.encabezado__contenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e2);
+  padding-top: var(--e3);
+  padding-bottom: var(--e2);
+}
+
+.encabezado__marca {
+  display: flex;
+  align-items: center;
+  gap: var(--e3);
+  color: var(--negro);
+  text-decoration: none;
+  font-family: var(--fuente-titulos);
+  font-size: 20px;
+}
+
+.encabezado__nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Cada acceso: ícono + texto, 48 px de alto para tocar con el dedo */
+.encabezado__accion {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e1);
+  min-height: 48px;
+  padding: 0 var(--e1);
+  background: none;
+  border: 0;
+  font: inherit;
+  color: var(--negro);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* La pantalla en la que estás se marca en rojo */
+.encabezado__accion.active {
+  color: var(--rojo-acento);
+  font-weight: 600;
+}
+
+/* En el celular, estos accesos están dentro del menú */
+.encabezado__solo-ancho {
+  display: none;
+}
+
+/* Pantalla ancha (7.3): todo en una fila, sin botón de menú */
+@media (min-width: 1024px) {
+  .encabezado__contenido {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .encabezado__nav {
+    gap: var(--e4);
+  }
+
+  .encabezado__boton-menu {
+    display: none;
+  }
+
+  .encabezado__solo-ancho {
+    display: inline-flex;
+  }
+}

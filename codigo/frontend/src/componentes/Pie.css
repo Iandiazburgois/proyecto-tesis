@@ -1,0 +1,55 @@
+/* Pie: fondo negro y texto blanco (17,4:1, mismo contraste que el texto general) */
+.pie {
+  background: var(--negro);
+  color: var(--blanco);
+  padding: var(--e5) 0;
+}
+
+.pie h2 {
+  font-size: 20px;
+  line-height: 28px;
+  text-transform: none;
+}
+
+.pie a {
+  color: var(--blanco);
+}
+
+.pie__contenido {
+  display: grid;
+  gap: var(--e5);
+}
+
+.pie__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--e2);
+}
+
+/* Ícono y texto en la misma línea; los textos largos (el email) bajan de renglón */
+.pie__lista li,
+.pie__fila {
+  display: flex;
+  align-items: center;
+  gap: var(--e2);
+  overflow-wrap: anywhere;
+}
+
+.pie__mapa {
+  width: 100%;
+  border-radius: var(--radio-campo);
+}
+
+.pie__atribucion {
+  font-size: 14px;
+  margin: var(--e1) 0 0;
+}
+
+/* Pantalla ancha: contacto y ubicación lado a lado (7.3) */
+@media (min-width: 768px) {
+  .pie__contenido {
+    grid-template-columns: 1fr 1fr;
+  }
+}
