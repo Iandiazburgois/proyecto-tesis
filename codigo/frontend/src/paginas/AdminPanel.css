@@ -1,0 +1,16 @@
+/* Tarjeta de cuotas: título, texto y botón uno debajo del otro */
+.admin-panel__cuotas {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--e3);
+  padding: var(--e4);
+  margin-top: var(--e3);
+}
+
+/* Cerrar sesión centrado, como en el prototipo */
+.admin-panel__acciones {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--e4);
+}

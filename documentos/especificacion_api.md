@@ -63,6 +63,7 @@ Los campos con `*` son obligatorios.
 | GET | `/cuotas` | Opcionales: `id_socio`, `estado`, `mes`, `anio` | — | La lista de cuotas, con el nombre, apellido y DNI de cada socio | 200, 400, 401, 403 | Admin |
 | GET | `/cuotas/:id` | `id` | — | La cuota | 200, 400, 401, 403, 404 | Admin |
 | POST | `/cuotas` | — | `{ id_socio*, mes_periodo* (1 a 12), anio_periodo* (2026 en adelante), monto* (mayor a 0), fecha_vencimiento* }` | La cuota creada, en "Pendiente" | 201, 400 (datos mal o el socio no existe), 401, 403, 409 (ese socio ya tiene cuota de ese mes) | Admin |
+| POST | `/cuotas/emitir` | — | `{ mes* (1 a 12), anio* (2026 en adelante) }` | Crea la cuota de ese mes para cada socio activo: $3.000 por persona (titular más familiares), con vencimiento el día 10. A los que ya la tenían los saltea, así que se puede pedir dos veces sin duplicar. Devuelve `{ emitidas, ya_tenian }` | 200, 400 (falta el mes o el año, o están fuera de rango), 401, 403 | Admin |
 | PUT | `/cuotas/:id` | `id` | Lo que quiera cambiar de `{ estado_pago (Pendiente / En revisión / Pagado), monto, fecha_vencimiento }` | La cuota actualizada. Si pasa a "Pagado" y no tenía fecha de pago, se pone la de hoy | 200, 400, 401, 403, 404 | Admin |
 | DELETE | `/cuotas/:id` | `id` | — | Nada | 204, 400, 401, 403, 404 | Admin |
 

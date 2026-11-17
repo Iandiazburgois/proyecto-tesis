@@ -10,6 +10,7 @@ router.get('/mias', autenticacion, controlador.misCuotas);
 router.put('/:id/comprobante', autenticacion, controlador.enviarComprobante);
 
 // Solo admin
+router.post('/emitir', autenticacion, soloAdmin, controlador.emitir);
 router.get('/', autenticacion, soloAdmin, controlador.listar);
 router.get('/:id', autenticacion, soloAdmin, controlador.obtener);
 router.post('/', autenticacion, soloAdmin, controlador.crear);

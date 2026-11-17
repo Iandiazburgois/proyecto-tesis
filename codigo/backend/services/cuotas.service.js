@@ -2,6 +2,10 @@ const repositorio = require('../data/cuotas.repositorio');
 const socios = require('../data/socios.repositorio');
 const { ErrorDeNegocio, ErrorDeDatos } = require('../utils/errores');
 
+// Cuota social: $3.000 por persona (titular + familiares)
+const CUOTA_POR_PERSONA = 3000;
+const DIA_VENCIMIENTO = 10;
+
 // Valores de estado_pago: 'Pendiente', 'En revisión', 'Pagado'
 async function misCuotas(idSocio) {
   const cuotas = await repositorio.deSocio(idSocio);
@@ -46,4 +50,26 @@ async function eliminar(id) {
   return repositorio.borrar(id);
 }
 
-module.exports = { misCuotas, enviarComprobante, listar, obtener, crear, actualizar, eliminar };
+// Crea la cuota del mes para cada socio activo. Si ya la tenía, lo saltea.
+async function emitir(mes, anio) {
+  const activos = (await socios.todos({ estado: 'Activo' })).filter((s) => s.rol === 'socio');
+  // El vencimiento queda como "AAAA-MM-10"
+  const vencimiento = `${anio}-${String(mes).padStart(2, '0')}-${DIA_VENCIMIENTO}`;
+  let emitidas = 0;
+
+  for (const socio of activos) {
+    if (await repositorio.porPeriodo(socio.id_socio, mes, anio)) continue;
+    const familiares = await socios.familiaresDe(socio.id_socio);
+    await repositorio.crear({
+      id_socio: socio.id_socio,
+      mes_periodo: mes,
+      anio_periodo: anio,
+      monto: CUOTA_POR_PERSONA * (1 + familiares.length),
+      fecha_vencimiento: vencimiento,
+    });
+    emitidas++;
+  }
+
+  return { emitidas, ya_tenian: activos.length - emitidas };
+}
+module.exports = { misCuotas, enviarComprobante, listar, obtener, crear, actualizar, eliminar, emitir };

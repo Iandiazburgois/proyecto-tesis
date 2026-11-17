@@ -114,4 +114,15 @@ async function eliminar(req, res) {
   res.status(204).end();
 }
 
-module.exports = { misCuotas, enviarComprobante, listar, obtener, crear, actualizar, eliminar };
+// POST /api/cuotas/emitir (admin)  cuerpo: { mes*, anio* } → 200 { emitidas, ya_tenian }, 400
+async function emitir(req, res) {
+  const b = req.body || {};
+  const falta = faltantes(b, ['mes', 'anio']);
+  if (falta.length) return res.status(400).json({ error: 'Faltan campos obligatorios', campos: falta });
+  const mes = Number(b.mes), anio = Number(b.anio);
+  if (!Number.isInteger(mes) || mes < 1 || mes > 12) return res.status(400).json({ error: 'mes debe ser de 1 a 12' });
+  if (!Number.isInteger(anio) || anio < 2026) return res.status(400).json({ error: 'anio debe ser 2026 o posterior' });
+  res.json(await servicio.emitir(mes, anio));
+}
+
+module.exports = { misCuotas, enviarComprobante, listar, obtener, crear, actualizar, eliminar, emitir };
