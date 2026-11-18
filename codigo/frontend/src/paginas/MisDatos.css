@@ -1,0 +1,47 @@
+/* Columna angosta y centrada, como los otros formularios */
+.mis-datos {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Cada parte separada 32 px de la anterior */
+.mis-datos__bloque + .mis-datos__bloque {
+  margin-top: var(--e5);
+}
+
+/* Botones de cada parte centrados */
+.mis-datos__boton {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Familiares: una tarjeta debajo de la otra, también en pantallas anchas */
+.mis-datos__familiares {
+  grid-template-columns: 1fr;
+  margin-bottom: var(--e3);
+}
+
+.mis-datos__quitar {
+  margin-top: var(--e3);
+}
+
+/* "Agregar familiar" en rojo con el + adelante */
+.mis-datos__agregar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e2);
+  color: var(--rojo-acento);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mis-datos__agregar:hover {
+  text-decoration: underline;
+}
+
+/* Pedir la baja centrado */
+.mis-datos__baja {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
