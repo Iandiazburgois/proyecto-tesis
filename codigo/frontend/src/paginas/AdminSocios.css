@@ -1,0 +1,42 @@
+/* Etiqueta "Buscar" con la lupa adelante */
+.admin-socios .campo label {
+  display: flex;
+  align-items: center;
+  gap: var(--e1);
+}
+
+/* Filtros por estado: los que no entran bajan de línea */
+.admin-socios__filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e3);
+  margin-bottom: var(--e3);
+}
+
+/* Los filtros sin elegir llevan borde gris, como en el prototipo */
+.admin-socios__filtro {
+  border-color: var(--gris-claro);
+}
+
+/* "Estado" con la letra de los títulos */
+.admin-socios__etiqueta {
+  margin: var(--e3) 0 var(--e1);
+  font-family: var(--fuente-titulos);
+  font-size: 20px;
+  line-height: 28px;
+}
+
+/* Botones de cada socio uno debajo del otro */
+.admin-socios__botones {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--e3);
+  margin-top: var(--e3);
+}
+
+/* Cerrar sesión centrado (la lista ya deja 32 px arriba) */
+.admin-socios__acciones {
+  display: flex;
+  justify-content: center;
+}
