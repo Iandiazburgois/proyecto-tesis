@@ -6,6 +6,8 @@ const LARGOS_SOCIO = { nombre: 100, apellido: 100, email: 150, telefono: 30, dni
 const LARGOS_FAMILIAR = { nombre: 100, apellido: 100, parentesco: 50, dni_frente_url: 255, dni_dorso_url: 255 };
 // El titular tiene que ser mayor de edad: los menores se suman como familiares de un adulto
 const EDAD_MINIMA = 18;
+// Más de 110 años es casi seguro un error al escribir la fecha
+const EDAD_MAXIMA = 110;
 
 
 // POST /api/auth/registro
@@ -29,6 +31,12 @@ async function registro(req, res) {
   }
   if (!esFecha(s.fecha_nacimiento)) {
     return res.status(400).json({ error: 'fecha_nacimiento tiene que ser una fecha válida AAAA-MM-DD' });
+  }
+
+  if (edad(s.fecha_nacimiento) > EDAD_MAXIMA) {
+    return res.status(400).json({
+      error: 'Revisá la fecha de nacimiento.',
+    });
   }
 
   if (edad(s.fecha_nacimiento) < EDAD_MINIMA) {
