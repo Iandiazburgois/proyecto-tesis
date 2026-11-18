@@ -38,7 +38,7 @@ export default function Encabezado() {
           {/* Solo en pantalla ancha (wireframe HOME de PC): accesos a las secciones del Inicio.
               En el celular no van, porque el Inicio se recorre bajando. */}
           <a href="#historia" className="encabezado__accion encabezado__solo-ancho">Nuestra historia</a>
-          <a href="#actividades" className="encabezado__accion encabezado__solo-ancho">Actividades</a>
+          <a href="#disciplinas" className="encabezado__accion encabezado__solo-ancho">Disciplinas</a>
           <a href="#novedades" className="encabezado__accion encabezado__solo-ancho">Novedades</a>
           <a href="#instalaciones" className="encabezado__accion encabezado__solo-ancho">Instalaciones</a>
 
