@@ -1,0 +1,26 @@
+/* "Ver comprobante" en rojo, separado del texto */
+.admin-comprobantes__ver {
+  display: inline-block;
+  margin-top: var(--e3);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-comprobantes__ver:hover {
+  text-decoration: underline;
+}
+
+/* Los dos botones uno debajo del otro, como en el prototipo */
+.admin-comprobantes__botones {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--e3);
+  margin-top: var(--e3);
+}
+
+/* Cerrar sesión centrado (la lista ya deja 32 px arriba) */
+.admin-comprobantes__acciones {
+  display: flex;
+  justify-content: center;
+}

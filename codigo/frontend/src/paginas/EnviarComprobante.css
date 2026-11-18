@@ -31,3 +31,19 @@
   flex-direction: column;
   align-items: center;
 }
+
+/* "¿Cómo consigo el enlace?": se abre al tocarlo */
+.enviar-comprobante__ayuda {
+  margin-bottom: var(--e3);
+}
+
+.enviar-comprobante__ayuda summary {
+  color: var(--rojo-acento);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.enviar-comprobante__ayuda ol {
+  margin: var(--e2) 0 0;
+  padding-left: var(--e4);
+}

@@ -161,8 +161,18 @@ export default function EnviarComprobante() {
             value={enlace}
             onChange={(e) => setEnlace(e.target.value)}
             error={errorEnlace}
-            ayuda="Pegá el link del comprobante que te da el banco o Mercado Pago."
+            ayuda="Subí el comprobante a Google Drive y pegá acá el enlace para compartirlo."
           />
+          {/* Pasos para conseguir el enlace: el banco y Mercado Pago dan un PDF, no un link */}
+          <details className="enviar-comprobante__ayuda">
+            <summary>¿Cómo consigo el enlace?</summary>
+            <ol>
+              <li>En Mercado Pago o en tu banco, descargá el comprobante de la transferencia.</li>
+              <li>Abrí Google Drive y subí ese archivo.</li>
+              <li>En el archivo, tocá Compartir y elegí “Cualquier persona con el enlace”.</li>
+              <li>Tocá Copiar vínculo y pegalo arriba.</li>
+            </ol>
+          </details>
           {errorApi && <Mensaje tipo="error">{errorApi}</Mensaje>}
           <button type="submit" className="boton boton--primario enviar-comprobante__boton" disabled={enviando}>
             {enviando ? 'Enviando…' : 'Enviar'}
