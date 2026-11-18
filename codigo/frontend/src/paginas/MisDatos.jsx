@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import CabeceraPantalla from '../componentes/CabeceraPantalla';
 import Campo from '../componentes/Campo';
 import Tarjeta from '../componentes/Tarjeta';
@@ -179,9 +179,10 @@ function CambiarPassword() {
 }
 
 // Grupo familiar
-function GrupoFamiliar({ familiares, setFamiliares }) {
+function GrupoFamiliar({ familiares, setFamiliares, mensajeInicial }) {
   const [quitando, setQuitando] = useState(null);
-  const [aviso, setAviso] = useState(null);
+  // Si venimos de agregar un familiar, mostramos ese aviso
+  const [aviso, setAviso] = useState(mensajeInicial ? { tipo: 'exito', texto: mensajeInicial } : null);
 
   async function quitar(familiar) {
     if (!window.confirm(`¿Seguro que querés quitar a ${familiar.nombre} ${familiar.apellido} de tu grupo familiar?`)) return;
@@ -267,6 +268,7 @@ function PedirBaja({ estadoInicial }) {
 }
 
 export default function MisDatos() {
+  const ubicacion = useLocation();
   const [socio, setSocio] = useState(null);
   const [familiares, setFamiliares] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -305,7 +307,7 @@ export default function MisDatos() {
       <>
         <DatosPersonales socio={socio} />
         <CambiarPassword />
-        <GrupoFamiliar familiares={familiares} setFamiliares={setFamiliares} />
+        <GrupoFamiliar familiares={familiares} setFamiliares={setFamiliares} mensajeInicial={ubicacion.state?.mensaje} />
         <PedirBaja estadoInicial={socio.estado} />
       </>
     );

@@ -1,0 +1,10 @@
+/* Formulario centrado, como los otros */
+.agregar-familiar__formulario {
+  margin: 0 auto;
+}
+
+/* Botón centrado */
+.agregar-familiar__boton {
+  display: block;
+  margin: 0 auto;
+}
