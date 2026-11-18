@@ -1,0 +1,81 @@
+/* Bienvenida: título, frase y botón alineados a la izquierda */
+.inicio__bienvenida {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--e3);
+}
+
+/* Cada sección separada de la anterior, con el título centrado */
+.inicio__seccion {
+  margin-top: var(--e5);
+  scroll-margin-top: var(--e4); /* al saltar desde el menú no queda pegado arriba */
+}
+
+.inicio__seccion > h2 {
+  text-align: center;
+  margin-bottom: var(--e3);
+}
+
+/* Historia: texto centrado y foto a todo el ancho */
+.inicio__historia {
+  text-align: center;
+  max-width: 40rem;
+  margin: 0 auto var(--e4);
+}
+
+.inicio__foto {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+}
+
+.inicio__horario {
+  font-weight: 600;
+}
+
+.inicio__vacio {
+  text-align: center;
+}
+
+/* Sponsors: logos centrados que bajan de línea cuando no entran */
+.inicio__sponsors {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--e3);
+}
+
+.inicio__sponsors li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  min-height: 64px;
+  padding: var(--e2);
+  border: 1px solid var(--gris-claro);
+  border-radius: var(--radio-campo);
+  text-align: center;
+}
+
+.inicio__sponsors img {
+  max-width: 100%;
+  max-height: 48px;
+  object-fit: contain;
+}
+
+/* En pantallas anchas, recuadros más grandes */
+@media (min-width: 768px) {
+  .inicio__sponsors li {
+    width: 160px;
+    min-height: 80px;
+  }
+
+  .inicio__sponsors img {
+    max-height: 64px;
+  }
+}
