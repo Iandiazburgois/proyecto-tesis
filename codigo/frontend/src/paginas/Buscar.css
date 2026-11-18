@@ -1,0 +1,34 @@
+/* Formulario angosto y centrado, con el botón debajo del campo */
+.buscar__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e2);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.buscar__formulario .boton {
+  align-self: flex-start;
+}
+
+/* "Resultados para la búsqueda: ..."  */
+.buscar__consulta {
+  text-align: center;
+  margin: var(--e4) 0;
+}
+
+/* Cada grupo (Novedades, Actividades, Instalaciones) con su título a la izquierda */
+.buscar__grupo {
+  margin-top: var(--e4);
+}
+
+.buscar__grupo > h2 {
+  margin-bottom: var(--e3);
+}
+
+/* Botón "Volver al inicio" centrado */
+.buscar__acciones {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--e3);
+}
