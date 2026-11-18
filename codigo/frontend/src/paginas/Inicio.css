@@ -3,10 +3,9 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--e3);
 }
 
-/* Cada sección separada de la anterior, con el título centrado */
+/* Cada sección separada 32 px de la anterior */
 .inicio__seccion {
   margin-top: var(--e5);
   scroll-margin-top: var(--e4); /* al saltar desde el menú no queda pegado arriba */
@@ -14,14 +13,18 @@
 
 .inicio__seccion > h2 {
   text-align: center;
-  margin-bottom: var(--e3);
 }
 
-/* Historia: texto centrado y foto a todo el ancho */
+/* La lista no suma espacio abajo: ya lo pone la sección siguiente */
+.inicio__seccion .lista-tarjetas {
+  margin-bottom: 0;
+}
+
+/* Historia: texto centrado arriba de la foto */
 .inicio__historia {
   text-align: center;
   max-width: 40rem;
-  margin: 0 auto var(--e4);
+  margin: 0 auto var(--e3);
 }
 
 .inicio__foto {
@@ -31,8 +34,10 @@
   object-fit: cover;
 }
 
+/* Días y horario de cada disciplina */
 .inicio__horario {
   font-weight: 600;
+  margin: var(--e2) 0 0;
 }
 
 .inicio__vacio {

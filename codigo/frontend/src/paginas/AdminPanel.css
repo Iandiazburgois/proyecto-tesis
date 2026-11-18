@@ -3,14 +3,18 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--e3);
-  padding: var(--e4);
-  margin-top: var(--e3);
+  padding: var(--e3);
 }
 
-/* Cerrar sesión centrado, como en el prototipo */
+/* Botón y mensaje separados del texto */
+.admin-panel__cuotas .boton,
+.admin-panel__cuotas .mensaje {
+  margin: var(--e3) 0 0;
+}
+
+/* Cerrar sesión centrado, separado 32 px */
 .admin-panel__acciones {
   display: flex;
   justify-content: center;
-  margin-top: var(--e4);
+  margin-top: var(--e5);
 }

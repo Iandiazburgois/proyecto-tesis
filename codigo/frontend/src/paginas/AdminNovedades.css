@@ -1,0 +1,24 @@
+/* "Publicar novedad" en rojo con el + adelante */
+.admin-novedades__publicar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e2);
+  margin-bottom: var(--e3);
+  color: var(--rojo-acento);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-novedades__publicar:hover {
+  text-decoration: underline;
+}
+
+.admin-novedades__borrar {
+  margin-top: var(--e3);
+}
+
+/* Cerrar sesión centrado (la lista ya deja 32 px arriba) */
+.admin-novedades__acciones {
+  display: flex;
+  justify-content: center;
+}
