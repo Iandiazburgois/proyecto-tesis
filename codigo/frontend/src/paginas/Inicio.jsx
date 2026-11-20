@@ -52,7 +52,8 @@ export default function Inicio() {
         ]);
         setDatos({
           actividades,
-          novedades: novedades.slice(0, CANTIDAD_NOVEDADES),
+          // Primero las destacadas, después las demás
+          novedades: [...novedades].sort((a, b) => b.destacado - a.destacado).slice(0, CANTIDAD_NOVEDADES),
           instalaciones,
           sponsors,
         });

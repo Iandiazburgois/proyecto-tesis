@@ -1,0 +1,31 @@
+/* Formulario centrado, como los otros */
+.publicar-novedad__formulario {
+  margin: 0 auto;
+}
+
+/* El contenido es un texto largo: se puede agrandar hacia abajo */
+.publicar-novedad textarea {
+  resize: vertical;
+}
+
+/* Casilla con su texto al lado */
+.publicar-novedad__destacado {
+  display: flex;
+  align-items: center;
+  gap: var(--e2);
+  margin-bottom: var(--e3);
+  cursor: pointer;
+}
+
+.publicar-novedad__destacado input {
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  accent-color: var(--rojo-acento);
+}
+
+/* Botón centrado */
+.publicar-novedad__boton {
+  display: block;
+  margin: 0 auto;
+}
