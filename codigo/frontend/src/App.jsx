@@ -59,6 +59,7 @@ export default function App() {
           <Route path="/admin/comprobantes" element={<AdminComprobantes />} />
           <Route path="/admin/novedades" element={<AdminNovedades />} />
           <Route path="/admin/novedades/nueva" element={<PublicarNovedad />} />
+          <Route path="/admin/novedades/:id/editar" element={<PublicarNovedad />} />
           <Route path="/admin/socios" element={<AdminSocios />} />
         </Route>
       </Route>

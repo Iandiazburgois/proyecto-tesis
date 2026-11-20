@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
 import CabeceraPantalla from '../componentes/CabeceraPantalla';
 import Campo from '../componentes/Campo';
 import Icono from '../componentes/Icono';
-import { Mensaje } from '../componentes/Estados';
+import { Cargando, ErrorCarga, Mensaje } from '../componentes/Estados';
 import { pedir } from '../servicios/api';
 import './PublicarNovedad.css';
 
-// Admin — Publicar novedad (11b del prototipo)
-// API: POST /novedades
+// Admin — Publicar y editar novedad (11b del prototipo)
+// API: POST /novedades, GET y PUT /novedades/:id
 
 // Los mismos largos que en la base de datos
 const LARGO_TITULO = 150;
@@ -34,10 +34,45 @@ function validar(novedad) {
 
 export default function PublicarNovedad() {
   const navegar = useNavigate();
+  // Si la dirección trae un id, estamos editando esa novedad
+  const { id } = useParams();
+  const editando = Boolean(id);
+
   const [novedad, setNovedad] = useState(NOVEDAD_VACIA);
   const [errores, setErrores] = useState({});
   const [errorApi, setErrorApi] = useState('');
   const [enviando, setEnviando] = useState(false);
+
+  // Carga de la novedad a editar
+  const [cargando, setCargando] = useState(editando);
+  const [errorCarga, setErrorCarga] = useState('');
+  const [intento, setIntento] = useState(0);
+
+  useEffect(() => {
+    if (!editando) return;
+    async function cargar() {
+      try {
+        const n = await pedir(`/novedades/${id}`);
+        setNovedad({
+          titulo: n.titulo,
+          contenido: n.contenido,
+          imagen_url: n.imagen_url ?? '',
+          destacado: n.destacado,
+        });
+      } catch (e) {
+        setErrorCarga(e.message);
+      } finally {
+        setCargando(false);
+      }
+    }
+    cargar();
+  }, [editando, id, intento]);
+
+  function reintentar() {
+    setErrorCarga('');
+    setCargando(true);
+    setIntento(intento + 1);
+  }
 
   // Un solo manejador para todos los campos. La casilla usa checked en vez de value
   function cambiar(e) {
@@ -45,7 +80,7 @@ export default function PublicarNovedad() {
     setNovedad({ ...novedad, [name]: type === 'checkbox' ? checked : value });
   }
 
-  async function publicar(e) {
+  async function guardar(e) {
     e.preventDefault();
     setErrorApi('');
     const nuevos = validar(novedad);
@@ -56,27 +91,55 @@ export default function PublicarNovedad() {
       return;
     }
 
+    const datos = {
+      titulo: novedad.titulo.trim(),
+      contenido: novedad.contenido.trim(),
+      imagen_url: novedad.imagen_url.trim() || undefined,
+      destacado: novedad.destacado,
+    };
+
     setEnviando(true);
     try {
-      await pedir('/novedades', 'POST', {
-        titulo: novedad.titulo.trim(),
-        contenido: novedad.contenido.trim(),
-        imagen_url: novedad.imagen_url.trim() || undefined,
-        destacado: novedad.destacado,
-      });
+      if (editando) {
+        await pedir(`/novedades/${id}`, 'PUT', datos);
+      } else {
+        await pedir('/novedades', 'POST', datos);
+      }
       // Volvemos a la lista con el aviso
-      navegar('/admin/novedades', { state: { mensaje: 'Se publicó la novedad.' } });
+      navegar('/admin/novedades', {
+        state: { mensaje: editando ? 'Se guardaron los cambios.' : 'Se publicó la novedad.' },
+      });
     } catch (error) {
       setErrorApi(error.message);
       setEnviando(false);
     }
   }
 
+  const titulo = editando ? 'Editar novedad' : 'Publicar novedad';
+
+  if (cargando) {
+    return (
+      <div className="publicar-novedad">
+        <CabeceraPantalla titulo={titulo} volverA="/admin/novedades" />
+        <Cargando texto="Cargando la novedad…" />
+      </div>
+    );
+  }
+
+  if (errorCarga) {
+    return (
+      <div className="publicar-novedad">
+        <CabeceraPantalla titulo={titulo} volverA="/admin/novedades" />
+        <ErrorCarga mensaje={errorCarga} alReintentar={reintentar} />
+      </div>
+    );
+  }
+
   return (
     <div className="publicar-novedad">
-      <CabeceraPantalla titulo="Publicar novedad" volverA="/admin/novedades" />
+      <CabeceraPantalla titulo={titulo} volverA="/admin/novedades" />
 
-      <form className="formulario publicar-novedad__formulario" onSubmit={publicar} noValidate>
+      <form className="formulario publicar-novedad__formulario" onSubmit={guardar} noValidate>
         <Campo
           id="titulo"
           etiqueta="Título"
@@ -136,7 +199,9 @@ export default function PublicarNovedad() {
         {errorApi && <Mensaje tipo="error">{errorApi}</Mensaje>}
 
         <button type="submit" className="boton boton--primario publicar-novedad__boton" disabled={enviando}>
-          {enviando ? 'Publicando…' : 'Publicar'}
+          {editando
+            ? (enviando ? 'Guardando…' : 'Guardar cambios')
+            : (enviando ? 'Publicando…' : 'Publicar')}
         </button>
       </form>
     </div>

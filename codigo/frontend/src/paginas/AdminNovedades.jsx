@@ -89,14 +89,19 @@ export default function AdminNovedades() {
       <div className="lista-tarjetas">
         {novedades.map((n) => (
           <Tarjeta key={n.id_novedad} titulo={n.titulo} texto={fechaCorta(n.fecha_publicacion)}>
-            <button
-              type="button"
-              className="boton boton--secundario admin-novedades__borrar"
-              onClick={() => borrar(n)}
-              disabled={borrando === n.id_novedad}
-            >
-              {borrando === n.id_novedad ? 'Borrando…' : 'Borrar'}
-            </button>
+                       <div className="admin-novedades__botones">
+              <Link to={`/admin/novedades/${n.id_novedad}/editar`} className="boton boton--secundario">
+                Editar
+              </Link>
+              <button
+                type="button"
+                className="boton boton--secundario"
+                onClick={() => borrar(n)}
+                disabled={borrando === n.id_novedad}
+              >
+                {borrando === n.id_novedad ? 'Borrando…' : 'Borrar'}
+              </button>
+            </div>
           </Tarjeta>
         ))}
       </div>

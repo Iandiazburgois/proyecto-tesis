@@ -13,7 +13,11 @@
   text-decoration: underline;
 }
 
-.admin-novedades__borrar {
+/* Editar y Borrar uno al lado del otro */
+.admin-novedades__botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e3);
   margin-top: var(--e3);
 }
 
