@@ -81,7 +81,7 @@ export default function Inicio() {
     contenido = (
       <>
         <Seccion id="actividades" titulo="Disciplinas" vacia={datos.actividades.length === 0}>
-          <div className="lista-tarjetas">
+          <div className="lista-tarjetas inicio__disciplinas">
             {datos.actividades.map((a) => (
               <Tarjeta key={a.id_actividad} titulo={a.nombre} texto={a.descripcion}>
                 {horario(a) && <p className="inicio__horario">{horario(a)}</p>}
@@ -107,13 +107,13 @@ export default function Inicio() {
         </Seccion>
 
         <Seccion id="sponsors" titulo="Nuestros sponsors" vacia={datos.sponsors.length === 0}>
-          <ul className="inicio__sponsors">
-            {datos.sponsors.map((s) => (
-              <li key={s.id_sponsor}>
-                {s.logo_url ? <img src={s.logo_url} alt={s.nombre} /> : <span>{s.nombre}</span>}
-              </li>
-            ))}
-          </ul>
+          {/* Una sola imagen con todos los logos. Los nombres vienen de la API para el texto alternativo */}
+          <div className="inicio__sponsors">
+            <img
+              src="/imagenes/sponsors.jpg"
+              alt={`Logos de nuestros sponsors: ${datos.sponsors.map((s) => s.nombre).join(', ')}`}
+            />
+          </div>
         </Seccion>
       </>
     );
@@ -134,12 +134,12 @@ export default function Inicio() {
         <h2>Nuestra historia</h2>
         <p className="inicio__historia">
           Fundado el 2 de febrero de 1928, Sportivo crece junto a la comunidad hace casi un siglo.
-          Campeón de Primera en la Liga Necochense en 1998.
+          Campeón de Primera en la Liga Necochense en 1998 y 2016.
         </p>
         <img
           className="inicio__foto"
-          src="/imagenes/historia.png"
-          alt="Bandera argentina junto a la bandera roja y blanca del club"
+          src="/imagenes/historia.jpg"
+          alt="Hinchas de Sportivo alentando con banderas y paraguas rojos y blancos"
         />
       </section>
 

@@ -27,12 +27,15 @@
   margin: 0 auto var(--e3);
 }
 
+/* Foto de la historia: en PC se recorta, mostrando la parte de las banderas */
 .inicio__foto {
   display: block;
   width: 100%;
   max-height: 420px;
   object-fit: cover;
+  object-position: center 65%; /* que se vean las banderas y no solo el cielo */
 }
+
 
 /* Días y horario de cada disciplina */
 .inicio__horario {
@@ -44,43 +47,31 @@
   text-align: center;
 }
 
-/* Sponsors: logos centrados que bajan de línea cuando no entran */
+/* Sponsors: la tira de logos entera. En el celular se desliza de costado */
 .inicio__sponsors {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--e3);
-}
-
-.inicio__sponsors li {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 120px;
-  min-height: 64px;
-  padding: var(--e2);
-  border: 1px solid var(--gris-claro);
-  border-radius: var(--radio-campo);
-  text-align: center;
+  overflow-x: auto;
 }
 
 .inicio__sponsors img {
-  max-width: 100%;
-  max-height: 48px;
-  object-fit: contain;
+  height: 64px;
+  width: auto;
+  max-width: none;
 }
 
-/* En pantallas anchas, recuadros más grandes */
-@media (min-width: 768px) {
-  .inicio__sponsors li {
-    width: 160px;
-    min-height: 80px;
-  }
-
+/* En pantallas anchas entra entera */
+@media (min-width: 1024px) {
   .inicio__sponsors img {
-    max-height: 64px;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
+}
+
+/* Disciplinas: son pocas, así que en pantallas anchas van centradas
+   con el mismo ancho que las otras tarjetas */
+@media (min-width: 768px) {
+  .inicio__seccion .inicio__disciplinas {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 340px));
+    justify-content: center;
   }
 }
