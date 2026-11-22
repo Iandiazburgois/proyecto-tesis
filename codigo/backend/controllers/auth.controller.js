@@ -92,16 +92,22 @@ function edad(fecha) {
   return anios;
 }
 
-// POST /api/auth/login  cuerpo: { usuario*, password* }  (usuario = email o DNI)
-// → 200 { token, socio }, 400 si faltan datos, 401 si no coinciden
+  // POST /api/auth/login  cuerpo: { usuario*, password* }  (usuario = email o DNI)
+  // → 200 { token, socio }, 400 si faltan datos, 401 si no coinciden,
+  //   409 si el socio está dado de baja
 async function login(req, res) {
   const { usuario, password } = req.body || {};
   if (!usuario || !password) {
     return res.status(400).json({ error: 'Ingresá usuario (email o DNI) y contraseña' });
   }
-  const resultado = await servicio.iniciarSesion(String(usuario).trim(), String(password));
-  if (!resultado) return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
-  res.json(resultado);
+  try {
+    const resultado = await servicio.iniciarSesion(String(usuario).trim(), String(password));
+    if (!resultado) return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+    res.json(resultado);
+  } catch (e) {
+    // ErrorDeNegocio (socio dado de baja) → 409 con su mensaje, igual que en el registro
+    responderError(e, res);
+  }
 }
 
 module.exports = { registro, login };

@@ -21,8 +21,9 @@ async function registrar(socio, familiares) {
   return socios.crearConFamiliares({ ...resto, password_hash }, familiares);
 }
 
-// iniciarSesion(usuario, password) → { token, socio }, o null si no coinciden (→ 401)
-//   El token lleva { id: id_socio, email, rol } y se firma con process.env.JWT_SECRET.
+ // iniciarSesion(usuario, password) → { token, socio }, o null si no coinciden (→ 401)
+ //   Regla: un socio dado de baja (Inactivo) no puede entrar → ErrorDeNegocio (409)
+ //   El token lleva { id: id_socio, email, rol } y se firma con process.env.JWT_SECRET.
 async function iniciarSesion(usuario, password) {
   const socio = await socios.porEmailODni(usuario);
   // El usuario inexistente y la contraseña equivocada dan lo mismo (null → 401):
@@ -30,6 +31,12 @@ async function iniciarSesion(usuario, password) {
   if (!socio || !(await bcrypt.compare(password, socio.password_hash))) {
     return null;
   }
+
+  // Se revisa después de la contraseña: así solo el dueño de la cuenta se entera de que está dada de baja
+  if (socio.estado === 'Inactivo') {
+    throw new ErrorDeNegocio('Tu cuenta está dada de baja. Para volver a asociarte, comunicate con el club.');
+  }
+
   const { password_hash, ...datos } = socio;
   const token = jwt.sign(
     { id: datos.id_socio, email: datos.email, rol: datos.rol },
