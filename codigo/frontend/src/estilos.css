@@ -342,3 +342,9 @@ img { max-width: 100%; display: block; }
   height: 64px;
   margin-bottom: var(--e2);
 }
+
+/* El escudo es un enlace al inicio: sin espacio de más debajo de la imagen */
+.cabecera-pantalla__inicio {
+  display: block;
+  line-height: 0;
+}
