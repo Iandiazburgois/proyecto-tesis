@@ -9,9 +9,6 @@ import './Inicio.css';
 // Inicio (01 y 01b del prototipo)
 // API: GET /actividades, /novedades, /instalaciones y /sponsors
 
-// En el inicio se muestran solo las últimas novedades
-const CANTIDAD_NOVEDADES = 3;
-
 // "20:00:00" → "20:00"
 function hora(texto) {
   return texto.slice(0, 5);
@@ -52,8 +49,8 @@ export default function Inicio() {
         ]);
         setDatos({
           actividades,
-          // Primero las destacadas, después las demás
-          novedades: [...novedades].sort((a, b) => b.destacado - a.destacado).slice(0, CANTIDAD_NOVEDADES),
+          // Todas las novedades, en el carrusel: primero las destacadas, después las demás
+          novedades: [...novedades].sort((a, b) => b.destacado - a.destacado),
           instalaciones,
           sponsors,
         });
@@ -91,7 +88,7 @@ export default function Inicio() {
         </Seccion>
 
         <Seccion id="novedades" titulo="Novedades" vacia={datos.novedades.length === 0}>
-          {/* En el celular las novedades van en una fila que se desliza con el dedo */}
+          {/* Las novedades van en una fila que se desliza; al tocar una, se abre su foto completa */}
           <div
             className="lista-tarjetas inicio__deslizable"
             tabIndex={0}
@@ -99,13 +96,19 @@ export default function Inicio() {
             aria-label="Novedades: deslizá para ver más"
           >
             {datos.novedades.map((n) => (
-              <Tarjeta key={n.id_novedad} titulo={n.titulo} texto={n.contenido} imagen={n.imagen_url} />
+              <Tarjeta
+                key={n.id_novedad}
+                titulo={n.titulo}
+                texto={n.contenido}
+                imagen={n.imagen_url}
+                href={n.imagen_url}
+              />
             ))}
           </div>
         </Seccion>
 
         <Seccion id="instalaciones" titulo="Instalaciones" vacia={datos.instalaciones.length === 0}>
-          {/* Igual que las novedades: en el celular se desliza con el dedo */}
+          {/* Igual que las novedades: se desliza y al tocar una, se abre su foto completa */}
           <div
             className="lista-tarjetas inicio__deslizable"
             tabIndex={0}
@@ -113,7 +116,13 @@ export default function Inicio() {
             aria-label="Instalaciones: deslizá para ver más"
           >
             {datos.instalaciones.map((i) => (
-              <Tarjeta key={i.id_instalacion} titulo={i.nombre} texto={i.descripcion} imagen={i.imagen_url} />
+              <Tarjeta
+                key={i.id_instalacion}
+                titulo={i.nombre}
+                texto={i.descripcion}
+                imagen={i.imagen_url}
+                href={i.imagen_url}
+              />
             ))}
           </div>
         </Seccion>
