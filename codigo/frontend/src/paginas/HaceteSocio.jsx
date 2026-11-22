@@ -75,14 +75,20 @@ function estaVacio(familiar) {
   return Object.values(familiar).every((valor) => valor.trim() === '');
 }
 
-// Revisa un familiar: si se completó alguno de sus datos, se piden todos
-function validarFamiliar(familiar) {
+// Revisa un familiar: si se completó alguno de sus datos, se piden todos.
+// El DNI no puede ser el del titular ni repetirse con el de un familiar anterior.
+function validarFamiliar(familiar, indice, todos, dniTitular) {
   const errores = {};
   if (estaVacio(familiar)) return errores;
 
+  const dni = familiar.dni.trim();
   if (familiar.nombre.trim() === '') errores.nombre = 'Ingresá el nombre.';
   if (familiar.apellido.trim() === '') errores.apellido = 'Ingresá el apellido.';
-  if (!esDni(familiar.dni.trim())) errores.dni = 'El DNI tiene que tener 7 u 8 números, sin puntos.';
+  if (!esDni(dni)) errores.dni = 'El DNI tiene que tener 7 u 8 números, sin puntos.';
+  else if (dni === dniTitular) errores.dni = 'Ese es el DNI del titular. Ingresá el DNI del familiar.';
+  else if (todos.slice(0, indice).some((otro) => otro.dni.trim() === dni)) {
+    errores.dni = 'Ya pusiste este DNI en otro familiar.';
+  }
   if (familiar.parentesco.trim() === '') errores.parentesco = 'Indicá el parentesco.';
 
   return errores;
@@ -135,7 +141,7 @@ export default function HaceteSocio() {
     setErrorApi('');
 
     const nuevosErrores = validarTitular(titular);
-    const nuevosErroresFamiliares = familiares.map(validarFamiliar);
+    const nuevosErroresFamiliares = familiares.map((f, i) => validarFamiliar(f, i, familiares, titular.dni.trim()));
     setErrores(nuevosErrores);
     setErroresFamiliares(nuevosErroresFamiliares);
 

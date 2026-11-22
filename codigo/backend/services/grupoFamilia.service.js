@@ -1,9 +1,17 @@
 const repositorio = require('../data/grupoFamilia.repositorio');
+const socios = require('../data/socios.repositorio');
 const { ErrorDeNegocio } = require('../utils/errores');
 
-// Regla: dentro del grupo de un socio no se puede repetir el DNI.
+// Reglas del DNI de un familiar:
+//   - No puede ser el DNI del titular.
+//   - Dentro del grupo de un socio no se puede repetir.
 // Al modificar, el familiar puede quedarse con su propio DNI (por eso idPropio).
 async function controlarDni(dni, idTitular, idPropio) {
+  const titular = await socios.porEmailODni(dni);
+  if (titular && titular.id_socio === idTitular) {
+    throw new ErrorDeNegocio('Ese es el DNI del titular. Ingresá el DNI de tu familiar.');
+  }
+
   const otro = await repositorio.porDni(dni, idTitular);
   if (otro && otro.id_grupo !== idPropio) {
     throw new ErrorDeNegocio(`Ya hay un familiar con el DNI ${dni} en tu grupo`);
