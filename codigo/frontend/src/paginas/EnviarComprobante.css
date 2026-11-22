@@ -47,3 +47,15 @@
   margin: var(--e2) 0 0;
   padding-left: var(--e4);
 }
+
+/* La opción de WhatsApp: separada del formulario, centrada y con el enlace en rojo */
+.enviar-comprobante__whatsapp {
+  margin-top: var(--e5);
+  padding-top: var(--e4);
+  border-top: 1px solid var(--gris-claro);
+  text-align: center;
+}
+
+.enviar-comprobante__whatsapp a {
+  font-weight: 600;
+}

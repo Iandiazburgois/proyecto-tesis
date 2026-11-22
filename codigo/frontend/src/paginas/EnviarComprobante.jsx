@@ -4,6 +4,7 @@ import CabeceraPantalla from '../componentes/CabeceraPantalla';
 import Campo from '../componentes/Campo';
 import { Cargando, ErrorCarga, Mensaje, Vacio } from '../componentes/Estados';
 import { pedir } from '../servicios/api';
+import { leerSocio } from '../servicios/sesion';
 import './EnviarComprobante.css';
 
 // R3 — Enviar comprobante (05c del prototipo)
@@ -17,6 +18,19 @@ const MESES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
 ];
+
+// WhatsApp del club (2983 556217), con el formato que pide WhatsApp: 54 9 + característica + número
+const WHATSAPP_CLUB = '5492983556217';
+
+// Enlace que abre el chat del club con el mensaje ya escrito
+function enlaceWhatsapp(cuota) {
+  const socio = leerSocio();
+  const texto =
+    `Hola, les mando el comprobante de la cuota de ${MESES[cuota.mes_periodo - 1]} ${cuota.anio_periodo}.\n` +
+    `Nombre: ${socio?.nombre} ${socio?.apellido}\n` +
+    `DNI: ${socio?.dni}`;
+  return `https://wa.me/${WHATSAPP_CLUB}?text=${encodeURIComponent(texto)}`;
+}
 
 // Cómo se muestra cada estado de una cuota: siempre ícono + texto, no solo color
 const ESTADOS = {
@@ -178,6 +192,18 @@ export default function EnviarComprobante() {
             {enviando ? 'Enviando…' : 'Enviar'}
           </button>
         </form>
+
+        {/* Otra forma de mandarlo, más simple: por WhatsApp, con los datos ya escritos */}
+        <div className="formulario enviar-comprobante__whatsapp">
+          <p><strong>¿Preferís mandarlo por WhatsApp?</strong></p>
+          <p>
+            Mandá la foto del comprobante al WhatsApp del club. El mensaje ya va con tu nombre,
+            tu DNI y el mes de la cuota.
+          </p>
+          <a href={enlaceWhatsapp(cuota)} target="_blank" rel="noreferrer">
+            Enviar por WhatsApp
+          </a>
+        </div>
       </>
     );
   }
