@@ -283,6 +283,11 @@ export default function HaceteSocio() {
           </button>
         </div>
       </form>
+
+      {/* Para quien ya tiene cuenta: un enlace de texto, el único botón es "Confirmar" */}
+      <p className="hacete-socio__ingresar">
+        ¿Ya sos socio? <Link to="/ingresar">Iniciá sesión</Link>
+      </p>
     </section>
   );
 }

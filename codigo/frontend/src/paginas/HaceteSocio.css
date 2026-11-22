@@ -69,3 +69,13 @@
   color: var(--rojo-acento);
   cursor: pointer;
 }
+
+/* "¿Ya sos socio? Iniciá sesión": texto centrado, con el enlace en rojo */
+.hacete-socio__ingresar {
+  text-align: center;
+  margin-top: var(--e4);
+}
+
+.hacete-socio__ingresar a {
+  font-weight: 600;
+}

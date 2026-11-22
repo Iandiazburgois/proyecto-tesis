@@ -83,12 +83,21 @@ img { max-width: 100%; display: block; }
   margin: 0 auto;
   padding: 0 var(--e4);
 }
-/* El espacio de la pantalla entre el encabezado y el pie */
+
+/* La página ocupa al menos el alto de la ventana: encabezado, contenido y pie en columna */
+.pagina {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* El contenido crece y ocupa el espacio que sobra, así el pie queda siempre abajo */
 .principal {
+  flex: 1;
   padding-top: var(--e4);
   padding-bottom: var(--e6);
-  min-height: 60vh; /* aunque haya poco contenido, el pie no sube hasta el medio */
 }
+
 /* Los íconos de Material Symbols */
 .icono {
   line-height: 1;
@@ -209,9 +218,11 @@ img { max-width: 100%; display: block; }
   font-size: 14px;
 }
 
-/* Los formularios no ocupan todo el ancho en pantallas grandes */
+/* Los formularios no ocupan todo el ancho en pantallas grandes, y van centrados */
 .formulario {
   max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ---------- 5. Tarjetas (5.5) ---------- */

@@ -131,13 +131,10 @@ export default function IniciarSesion() {
         </div>
       </form>
 
-      {/* Para quien todavía no tiene cuenta (como en el prototipo) */}
-      <div className="ingresar__acciones">
-        <p>¿Todavía no sos socio?</p>
-        <Link to="/hacete-socio" className="boton boton--primario">
-          Hacete socio
-        </Link>
-      </div>
+      {/* Para quien todavía no tiene cuenta: un enlace de texto, el único botón es "Iniciar sesión" */}
+      <p className="ingresar__registro">
+        ¿Todavía no sos socio? <Link to="/hacete-socio">Hacete socio</Link>
+      </p>
     </section>
   );
 }

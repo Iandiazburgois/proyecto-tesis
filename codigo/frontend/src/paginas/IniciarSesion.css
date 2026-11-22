@@ -16,3 +16,13 @@
 .ingresar__acciones p {
   margin: 0;
 }
+
+/* "¿Todavía no sos socio? Hacete socio": texto centrado, con el enlace en rojo */
+.ingresar__registro {
+  text-align: center;
+  margin-top: var(--e4);
+}
+
+.ingresar__registro a {
+  font-weight: 600;
+}
