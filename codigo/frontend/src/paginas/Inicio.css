@@ -75,3 +75,58 @@
     justify-content: center;
   }
 }
+
+/* Las secciones aparecen con un fundido suave cuando entran en la pantalla al bajar */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(var(--e4));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Solo si la persona no pidió menos movimiento en su sistema
+   y si el navegador sabe atar la animación al scroll */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .inicio__seccion {
+      animation: aparecer linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
+/* Novedades e instalaciones en el celular: una fila que se desliza con el dedo.
+   Cada tarjeta ocupa el 85% del ancho, así se ve un pedacito de la siguiente
+   y se entiende que hay más. */
+.lista-tarjetas.inicio__deslizable {
+  display: flex;
+  gap: var(--e3);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: var(--e2); /* lugar para la barra de desplazamiento */
+}
+
+/* Al soltar, la tarjeta se acomoda sola en el centro */
+.inicio__deslizable > * {
+  flex: 0 0 85%;
+  scroll-snap-align: center;
+}
+
+/* En tablet se ven dos tarjetas y un pedacito de la siguiente */
+@media (min-width: 768px) {
+  .inicio__deslizable > * {
+    flex-basis: 45%;
+  }
+}
+
+/* En PC, dos y media: la que queda cortada invita a deslizar */
+@media (min-width: 1024px) {
+  .inicio__deslizable > * {
+    flex-basis: 40%;
+  }
+}

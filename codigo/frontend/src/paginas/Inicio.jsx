@@ -91,7 +91,13 @@ export default function Inicio() {
         </Seccion>
 
         <Seccion id="novedades" titulo="Novedades" vacia={datos.novedades.length === 0}>
-          <div className="lista-tarjetas">
+          {/* En el celular las novedades van en una fila que se desliza con el dedo */}
+          <div
+            className="lista-tarjetas inicio__deslizable"
+            tabIndex={0}
+            role="region"
+            aria-label="Novedades: deslizá para ver más"
+          >
             {datos.novedades.map((n) => (
               <Tarjeta key={n.id_novedad} titulo={n.titulo} texto={n.contenido} imagen={n.imagen_url} />
             ))}
@@ -99,7 +105,13 @@ export default function Inicio() {
         </Seccion>
 
         <Seccion id="instalaciones" titulo="Instalaciones" vacia={datos.instalaciones.length === 0}>
-          <div className="lista-tarjetas">
+          {/* Igual que las novedades: en el celular se desliza con el dedo */}
+          <div
+            className="lista-tarjetas inicio__deslizable"
+            tabIndex={0}
+            role="region"
+            aria-label="Instalaciones: deslizá para ver más"
+          >
             {datos.instalaciones.map((i) => (
               <Tarjeta key={i.id_instalacion} titulo={i.nombre} texto={i.descripcion} imagen={i.imagen_url} />
             ))}
