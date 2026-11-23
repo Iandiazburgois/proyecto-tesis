@@ -17,7 +17,7 @@
   --fuente-titulos: 'Oswald', 'Arial Narrow', sans-serif;
   --fuente-texto: 'Open Sans', Arial, sans-serif;
 
-  /* Escala de espacios */
+  /* Escala de espacios (guía: Espaciado y medidas) */
   --e1: 4px;
   --e2: 8px;
   --e3: 16px;
@@ -234,6 +234,7 @@ img { max-width: 100%; display: block; }
   overflow: hidden; /* la imagen respeta las esquinas redondeadas */
   color: var(--negro);
   text-decoration: none;
+  overflow-wrap: anywhere; /* una palabra o un email muy largo se corta y no se sale de la tarjeta */
 }
 
 /* Foco (cuando la tarjeta es un enlace): borde de 2 px en rojo acento */

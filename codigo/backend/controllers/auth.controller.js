@@ -14,6 +14,7 @@ const EDAD_MAXIMA = 110;
 // cuerpo: { socio: { nombre*, apellido*, dni*, email*, password*, fecha_nacimiento*, telefono,
 //                    dni_frente_url, dni_dorso_url }, familiares: [ ... ] }
 // → 201 con el socio creado (sin password_hash), 400 si faltan datos o son inválidos,
+//   (también si un familiar repite el DNI del titular o de otro familiar),
 //   409 si ya existe ese email o DNI
 async function registro(req, res) {
   const b = req.body || {};
@@ -56,6 +57,14 @@ async function registro(req, res) {
     if (String(f.dni).trim().length > 20) {
       return res.status(400).json({ error: `El DNI del familiar ${i + 1} no puede tener más de 20 caracteres` });
     }
+    // El DNI de un familiar no puede ser el del titular ni repetirse con otro familiar
+    const dniFamiliar = String(f.dni).trim();
+    if (dniFamiliar === String(s.dni).trim()) {
+      return res.status(400).json({ error: `El familiar ${i + 1} tiene el mismo DNI que el titular` });
+    }
+    if (familiares.slice(0, i).some((otro) => String(otro?.dni).trim() === dniFamiliar)) {
+      return res.status(400).json({ error: `El familiar ${i + 1} tiene el mismo DNI que otro familiar` });
+    }
     const largosF = demasiadoLargos(f, LARGOS_FAMILIAR);
     if (largosF.length) {
       return res.status(400).json({ error: `Hay datos demasiado largos en el familiar ${i + 1}`, campos: largosF });
@@ -92,9 +101,9 @@ function edad(fecha) {
   return anios;
 }
 
-  // POST /api/auth/login  cuerpo: { usuario*, password* }  (usuario = email o DNI)
-  // → 200 { token, socio }, 400 si faltan datos, 401 si no coinciden,
-  //   409 si el socio está dado de baja
+// POST /api/auth/login  cuerpo: { usuario*, password* }  (usuario = email o DNI)
+// → 200 { token, socio }, 400 si faltan datos, 401 si no coinciden,
+//   409 si el socio está dado de baja
 async function login(req, res) {
   const { usuario, password } = req.body || {};
   if (!usuario || !password) {
