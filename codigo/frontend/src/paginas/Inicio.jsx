@@ -77,7 +77,7 @@ export default function Inicio() {
   } else {
     contenido = (
       <>
-        <Seccion id="actividades" titulo="Disciplinas" vacia={datos.actividades.length === 0}>
+        <Seccion id="disciplinas" titulo="Disciplinas" vacia={datos.actividades.length === 0}>
           <div className="lista-tarjetas inicio__disciplinas">
             {datos.actividades.map((a) => (
               <Tarjeta key={a.id_actividad} titulo={a.nombre} texto={a.descripcion}>
